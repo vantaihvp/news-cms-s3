@@ -1,0 +1,11 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '../access-admin/admin-lte/adminlte.min.css';
+@import 'admin-app.scss';
+@import '../access-admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css';
+@import '~bootstrap/scss/bootstrap';

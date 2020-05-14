@@ -11,10 +11,6 @@ interface RepositoryInterface
     public function getAll();
 
     /**
-     * Get All paginate
-     */
-    public function getAllPaginate($number,$term='');
-    /**
      * Get one
      * @param $id
      * @return mixed

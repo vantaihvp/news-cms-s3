@@ -13,6 +13,24 @@ import RoleDashboard from "./components/pages/role/RoleDashboard";
 import RoleList from "./components/pages/role/RoleList";
 import RoleCreate from "./components/pages/role/RoleCreate";
 import RoleEdit from "./components/pages/role/RoleEdit";
+//Category
+import CategoryDashboard from "./components/pages/category/CategoryDashboard";
+import CategoryList from "./components/pages/category/CategoryList";
+import CategoryEdit from "./components/pages/category/CategoryEdit";
+import CategoryCreate from "./components/pages/category/CategoryCreate";
+//Tags
+import tagDashboard from "./components/pages/tag/tagDashboard";
+import tagList from "./components/pages/tag/tagList";
+import tagEdit from "./components/pages/tag/tagEdit";
+import tagCreate from "./components/pages/tag/tagCreate";
+//posts
+import postDashboard from "./components/pages/posts/postDashboard";
+import postList from "./components/pages/posts/postList";
+import postEdit from "./components/pages/posts/postEdit";
+import postCreate from "./components/pages/posts/postCreate";
+//Photos
+import photoDashboard from "./components/pages/photo/photoDashboard";
+import photoList from "./components/pages/photo/photoList";
 // Routes
 const routes = [{
         path: "/",
@@ -47,6 +65,82 @@ const routes = [{
             auth: true
         },
         children: [{
+                path: "categories",
+                name: "category-dashboard",
+                component: CategoryDashboard,
+                children: [{
+                        path: "",
+                        name: "category-list",
+                        component: CategoryList
+                    },
+                    {
+                        path: "create",
+                        name: "category-create",
+                        component: CategoryCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "category-edit",
+                        component: CategoryEdit,
+                        props: true
+                    }
+                ]
+            },
+            {
+                path: "tags",
+                name: "tag-dashboard",
+                component: tagDashboard,
+                children: [{
+                        path: "",
+                        name: "tag-list",
+                        component: tagList
+                    },
+                    {
+                        path: "create",
+                        name: "tag-create",
+                        component: tagCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "tag-edit",
+                        component: tagEdit,
+                        props: true
+                    }
+                ]
+            },
+            {
+                path: "posts",
+                name: "post-dashboard",
+                component: postDashboard,
+                children: [{
+                        path: "",
+                        name: "post-list",
+                        component: postList
+                    },
+                    {
+                        path: "create",
+                        name: "post-create",
+                        component: postCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "post-edit",
+                        component: postEdit,
+                        props: true
+                    }
+                ]
+            },
+            {
+                path: "photos",
+                name: "photo.dashboard",
+                component: photoDashboard,
+                children: [{
+                    path: "",
+                    name: "photo.list",
+                    component: photoList
+                }, ]
+            },
+            {
                 path: "user",
                 name: "user-dashboard",
                 component: UserDashboard,

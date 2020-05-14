@@ -12,12 +12,14 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-   .js('resources/access-admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js', 'public/js')
-   .js('resources/access-admin/admin-lte/js/adminlte.min.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');
+    .js('resources/access-admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js', 'public/js')
+    .js('resources/access-admin/admin-lte/js/adminlte.min.js', 'public/js')
+    .js('resources/access-admin/admin-lte/js/custome.js', 'public/js')
+    .sass('resources/sass/app.scss', 'public/css');
 
 mix.scripts([
-   'public/js/app.js',
-   'public/js/jquery.overlayScrollbars.min.js',
-   'public/js/adminlte.min.js',
+    'public/js/app.js',
+    'public/js/jquery.overlayScrollbars.min.js',
+    'public/js/adminlte.min.js',
+    'public/js/custome.js',
 ], 'public/js/all-custom.js');

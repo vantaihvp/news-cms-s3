@@ -2,6 +2,7 @@
     "/js/adminlte.min.js": "/js/adminlte.min.js",
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
+    "/js/custome.js": "/js/custome.js",
     "/js/jquery.overlayScrollbars.min.js": "/js/jquery.overlayScrollbars.min.js",
     "/js/all-custom.js": "/js/all-custom.js"
 }

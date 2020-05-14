@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Post\Category\CategoryRepositoryInterface;
 class UserController extends Controller 
 {
     public $successStatus = 200;
+    protected $userRepository;
+
     public function __construct(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;

@@ -41,20 +41,7 @@ abstract class EloquentRepository implements RepositoryInterface
      */
     public function getAll()
     {
-        return $this->_model->all();
-    }
-
-    public function getAllPaginate($per_page,$term = ''){
-        $data = $this->_model->orderBy('id','DESC');
-        if($term){
-            $data->where(function($q) use($term){
-                $q->where('name','LIKE',"%$term%");
-                $q->orWhere('phone_number','LIKE',"%$term%");
-                $q->orWhere('email','LIKE',"%$term%");
-            });
-        }
-        $data = $data->paginate($per_page);
-        return $data;
+        return $this->_model->orderByDesc('id')->get();
     }
 
     /**

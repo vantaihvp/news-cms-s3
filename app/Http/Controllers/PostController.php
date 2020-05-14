@@ -49,6 +49,7 @@ class PostController extends Controller
         $user = Auth::user();
         $input = $request->all();
         $input['user_id'] = $user->id;
+        $input['slug'] = 'slug';
         $rs = Posts::create($input);
         return redirect()->route('post.index')->with('success','Thanh cong');
     }

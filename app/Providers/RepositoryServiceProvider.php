@@ -21,8 +21,16 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Post\PostRepository::class
         );
         $this->app->singleton(
+            \App\Repositories\Post\Category\CategoryRepositoryInterface::class,
+            \App\Repositories\Post\Category\CategoryRepository::class
+        );
+        $this->app->singleton(
             \App\Repositories\Slider\SliderRepositoryInterface::class,
             \App\Repositories\Slider\SliderRepository::class
+        );
+        $this->app->singleton(
+            \App\Repositories\Photo\PhotoRepositoryInterface::class,
+            \App\Repositories\Photo\PhotoRepository::class
         );
     }
 

@@ -10,6 +10,67 @@
         <a href="#" class="nav-link">
           <i class="fal fa-users"></i>
           <p>
+            Bài viết
+            <i class="fas fa-angle-left right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <router-link
+              exact
+              class="nav-link"
+              :to="{ name: 'post-list' }"
+              v-if="this.$can('post-list')"
+            >
+              <i class="far fa-circle nav-icon"></i>
+              <p>Danh sách bài viết</p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              exact
+              class="nav-link"
+              :to="{ name: 'post-create' }"
+              v-if="this.$can('post-create')"
+            >
+              <i class="far fa-circle nav-icon"></i>
+              <p>Thêm bài viết</p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              exact
+              class="nav-link"
+              :to="{ name: 'category-list' }"
+              v-if="this.$can('category-list')"
+            >
+              <i class="far fa-circle nav-icon"></i>
+              <p>Chuyên mục</p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              exact
+              class="nav-link"
+              :to="{ name: 'tag-list' }"
+              v-if="this.$can('tag-list')"
+            >
+              <i class="far fa-circle nav-icon"></i>
+              <p>Tags</p>
+            </router-link>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item" v-if="this.$can('photo-list')">
+        <router-link class="nav-link" :to="{ name: 'photo.list' }">
+          <i class="fas fa-photo-video"></i>
+          <p>Thư viện</p>
+        </router-link>
+      </li>
+      <li class="nav-item has-treeview" @click="toggleMenu">
+        <a href="#" class="nav-link">
+          <i class="fal fa-users"></i>
+          <p>
             Thành viên
             <i class="fas fa-angle-left right"></i>
           </p>

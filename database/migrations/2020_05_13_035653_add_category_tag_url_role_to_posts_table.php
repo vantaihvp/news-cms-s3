@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddCategoryTagUrlRoleToPostsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->json('categories_id')->nullable()->after('description');
+            $table->json('tags_id')->nullable()->after('categories_id');
+            $table->integer('role_id')->unsigned()->nullable()->after('user_id');
+            $table->string('url_video')->nullable()->after('description');
+            $table->integer('seo_id')->unsigned()->nullable()->after('tags_id');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropColumn('categories_id');
+            $table->dropColumn('tags_id');
+            $table->dropColumn('role_id');
+            $table->dropColumn('url_video');
+            $table->dropColumn('seo_id');
+        });
+    }
+}

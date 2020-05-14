@@ -8,6 +8,24 @@ class Posts extends Model
 {
     protected $table = "posts";
     protected $fillable = [
-        'title', 'description', 'user_id',
+        'title',
+        'slug',
+        'excerpt',
+        'is_featured',
+        'status',
+        'format',
+        'thumbnail_id',
+        'author_name',
+        'design_name',
+        'layout_name',
+        'related_posts',
+        'date',
+        'url_video',
+        'categories_id',
+        'tags_id',
+        'seo_id',
+        'role_id',
+        'description',
+        'user_id',
     ];
 }

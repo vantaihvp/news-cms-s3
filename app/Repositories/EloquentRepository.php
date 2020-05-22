@@ -43,6 +43,13 @@ abstract class EloquentRepository implements RepositoryInterface
     {
         return $this->_model->orderByDesc('id')->get();
     }
+    
+    public function getWithPaginate($attributes){
+        $per_page   = $attributes['per_page'] ? $attributes['per_page'] : 10;
+        $sortKey    = !empty($attributes['sortKey']) ? $attributes['sortKey'] : 'id';
+        $sortValue  = !empty($attributes['sortValue']) ? $attributes['sortValue'] : 'DESC';
+        return $this->_model->orderBy($sortKey,$sortValue)->paginate($per_page);
+    }
 
     /**
      * Get one

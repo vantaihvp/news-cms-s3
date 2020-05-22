@@ -30,13 +30,17 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
         $data = $data->paginate($per_page);
         return $data;
     }
-    public function getCategories($term=''){
+    public function getCategories($attributes){
         $data = $this->_model->where('taxonomy','category')->orderBy('id','DESC');
-        if($term){
-            $data->where('title','LIKE',"%$term%");
+        if($attributes->filled('s')){
+            $s = $attributes->get('s');
+            $data->where('title','LIKE',"%$s%");
         }
         $data = $data->get();
         return $data;
+    }
+    public function getCategoriesbyArrayId($data){
+        return 1;
     }
     
 }

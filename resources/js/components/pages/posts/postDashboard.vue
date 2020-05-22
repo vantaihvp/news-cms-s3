@@ -1,5 +1,5 @@
 <template>
-  <section class="categories">
+  <section class="posts">
     <router-view></router-view>
   </section>
 </template>

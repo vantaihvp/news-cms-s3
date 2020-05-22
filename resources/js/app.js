@@ -16,6 +16,7 @@ import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
 import VueToastr2 from "vue-toastr-2";
 import "vue-toastr-2/dist/vue-toastr-2.min.css";
+import CKEditor from 'ckeditor4-vue';
 
 window.toastr = require("toastr");
 
@@ -25,7 +26,7 @@ window.Vue = Vue;
 // Set Vue router
 Vue.router = router;
 Vue.use(VueRouter);
-
+Vue.use(CKEditor);
 Vue.use(VueToastr2);
 Vue.use(DatePicker);
 // Set Vue authentication

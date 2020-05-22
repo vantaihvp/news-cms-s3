@@ -111,7 +111,8 @@ export default {
     getResults() {
       let paramsData = {};
       if (this.searchText) {
-        paramsData["s"] = this.searchText;
+        paramsData.s = this.searchText;
+        paramsData.sort = 0;
       }
       axios
         .get("auth/categories/get-categories", { params: paramsData })

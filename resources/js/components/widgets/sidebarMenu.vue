@@ -8,33 +8,17 @@
     >
       <li class="nav-item has-treeview" @click="toggleMenu">
         <a href="#" class="nav-link">
-          <i class="fal fa-users"></i>
+          <i class="fa fa-edit"></i>
           <p>
             Bài viết
             <i class="fas fa-angle-left right"></i>
           </p>
         </a>
         <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <router-link
-              exact
-              class="nav-link"
-              :to="{ name: 'post-list' }"
-              v-if="this.$can('post-list')"
-            >
+          <li class="nav-item" v-if="this.$can('post-list')">
+            <router-link exact class="nav-link" :to="{ name: 'post-list' }">
               <i class="far fa-circle nav-icon"></i>
               <p>Danh sách bài viết</p>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link
-              exact
-              class="nav-link"
-              :to="{ name: 'post-create' }"
-              v-if="this.$can('post-create')"
-            >
-              <i class="far fa-circle nav-icon"></i>
-              <p>Thêm bài viết</p>
             </router-link>
           </li>
           <li class="nav-item">
@@ -63,7 +47,7 @@
       </li>
       <li class="nav-item" v-if="this.$can('photo-list')">
         <router-link class="nav-link" :to="{ name: 'photo.list' }">
-          <i class="fas fa-photo-video"></i>
+          <i class="fa fa-camera"></i>
           <p>Thư viện</p>
         </router-link>
       </li>

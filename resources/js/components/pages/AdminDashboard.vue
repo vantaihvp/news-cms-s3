@@ -14,7 +14,7 @@
       <ul class="navbar-nav ml-auto">
         <li class="dropdown user user-menu">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            <img src="/images/admin-lte/user2-160x160.jpg" class="user-image" alt="User Image" />
+            <img src="/images/admin/logo.png" class="user-image" alt="User Image" />
             <span class="hidden-xs">{{ this.$auth.user().user.name }}</span>
           </a>
           <ul class="dropdown-menu" style="width: 150px">
@@ -35,7 +35,7 @@
       <!-- Brand Logo -->
       <a href="/admin" class="brand-link">
         <img
-          src="/images/admin-lte/AdminLTELogo.png"
+          src="/images/admin/AdminLTELogo.png"
           alt="AdminLTE Logo"
           class="brand-image img-circle elevation-3"
           style="opacity: .8"
@@ -49,7 +49,7 @@
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
             <img
-              src="/images/admin-lte/user2-160x160.jpg"
+              src="/images/admin/user2-160x160.jpg"
               class="img-circle elevation-2"
               alt="User Image"
             />

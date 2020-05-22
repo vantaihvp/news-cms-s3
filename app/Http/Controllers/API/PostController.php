@@ -20,7 +20,7 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $rs = $this->postRepository->getAll();
+        $rs = $this->postRepository->getWithPaginate($request);
         return response()->json(['success'=>$rs]);
     }
 
@@ -45,12 +45,21 @@ class PostController extends Controller
         $this->validate($request, [
             'title' => 'required'
         ]);
-
         $user = Auth::user();
         $data = $request->all();
-        return $data;
         $data['user_id'] = $user->id;
-        $data['slug'] = 'slug';
+        $data['date'] = Carbon::parse($request->date);
+        $data['tags_id'] = json_encode($request->tags_id);
+        $data['categories_id'] = json_encode($request->categories_id);
+        $data['related_posts'] = json_encode($request->related_posts);
+        if($request->filled('slug')){
+            $data['slug'] = $this->slugify($request->get('slug'));
+        }else{
+            $data['slug'] = $this->slugify($request->get('title'));
+        }
+        if(!$request->thumbnail_id){
+            $data['thumbnail_id'] = 1;
+        }
         $rs = $this->postRepository->create($data);
         if($rs){
             return response()->json(['success'=>$rs]);
@@ -81,7 +90,17 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = \Auth::user();
+        $data = $this->postRepository->find($id);
+        if($user->id  != $data->user_id && !$user->can('other-post-edit')){
+            return response([
+                'errors' => 'Bạn không có quyền sửa bài viết của người khác'
+            ], 200);
+        }
+        if($data){
+            return response()->json(['success'=>$data]);
+        }
+        return response()->json(['errors'=> ['Not found']]);
     }
 
     /**
@@ -93,7 +112,20 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $attributes = $request->all();
+        $attributes['date'] = Carbon::parse($request->date);
+        if($request->filled('slug')){
+            $attributes['slug'] = $this->slugify($request->get('slug'));
+        }else{
+            $attributes['slug'] = $this->slugify($request->get('title'));
+        }
+        $attributes['tags_id'] = json_encode($request->tags_id);
+        $attributes['categories_id'] = json_encode($request->categories_id);
+        $attributes['related_posts'] = json_encode($request->related_posts);
+        $data = $this->postRepository->update($id,$attributes);
+        if($data){
+            return response()->json(['success'=>$data]);
+        }
     }
 
     /**
@@ -104,6 +136,10 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = $this->postRepository->delete($id);
+        if($data){
+            return response()->json(['success'=>true]);
+        }
+        return response()->json(['error'=>$id]);
     }
 }

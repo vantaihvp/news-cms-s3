@@ -31,5 +31,6 @@ Route::prefix('auth')->group(function () {
         Route::resource('roles','RoleController');
         Route::get('permissions','RoleController@getAllPermissions');
         Route::resource('posts','API\PostController');
+        Route::resource('seo','API\SeoController');
     });
 });

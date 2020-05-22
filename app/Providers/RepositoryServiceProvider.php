@@ -32,6 +32,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Photo\PhotoRepositoryInterface::class,
             \App\Repositories\Photo\PhotoRepository::class
         );
+        $this->app->singleton(
+            \App\Repositories\Seo\SeoRepositoryInterface::class,
+            \App\Repositories\Seo\SeoRepository::class
+        );
     }
 
     /**

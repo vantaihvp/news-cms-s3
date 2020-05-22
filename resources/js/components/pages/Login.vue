@@ -1,9 +1,9 @@
 <template>
-  <div class="container">
-    <div class="box-login">
+  <div class="section-login">
+    <div class="box-login d-flex align-items-center justify-content-center">
       <div class="row">
         <div class="col-12">
-          <div class="card card-default">
+          <div class="card border-0 card-login card-default">
             <div class="card-header">Login</div>
             <div class="card-body">
               <div class="alert alert-danger" v-if="has_error && !success">
@@ -82,4 +82,13 @@ export default {
 };
 </script>
 <style lang="scss">
+.section-login {
+  .box-login {
+    min-height: 100vh;
+    background: #f2f2f2;
+    .card-login {
+      width: 400px;
+    }
+  }
+}
 </style>

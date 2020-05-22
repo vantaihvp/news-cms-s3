@@ -30,7 +30,10 @@ class CategoryController extends Controller
     }
 
     public function getCategories(Request $request){
-        $rs = $this->categoryRepository->getCategories();
+        $rs = $this->categoryRepository->getCategories($request);
+        if($request->filled('sort') && $request->get('sort')==0){
+            return response()->json(['success'=>$rs]);
+        }
         $this->sortCategories($rs);
         return response()->json(['success'=>$this->categories_array]);
     }

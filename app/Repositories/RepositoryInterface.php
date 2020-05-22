@@ -10,6 +10,8 @@ interface RepositoryInterface
      */
     public function getAll();
 
+    public function getWithPaginate($attributes);
+
     /**
      * Get one
      * @param $id

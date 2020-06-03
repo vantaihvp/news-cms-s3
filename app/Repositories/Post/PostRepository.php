@@ -42,16 +42,20 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
                 }
             }
         }
-        if($attributes->filled('status')){
-            $rs->where('status',$attributes->status);
+        if($user){
+            if($attributes->filled('status')){
+                $rs->where('status',$attributes->status);
+            }
+            if(!$user->can('other-post-list')){
+                $rs->where('user_id',$user->id);
+            }
+        }else{
+            $rs->where('status','publish');
         }
         if($attributes->filled('dateTime')){
             $dateStart = Carbon::parse($attributes->dateTime[0]);
             $dateEnd = Carbon::parse($attributes->dateTime[1]);
             $rs->whereBetween('date',array($dateStart,$dateEnd));
-        }
-        if(!$user->can('other-post-list')){
-            $rs->where('user_id',$user->id);
         }
         $rs = $rs->paginate($per_page);
         foreach ($rs as $key => $post) {

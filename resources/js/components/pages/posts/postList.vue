@@ -170,6 +170,8 @@
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="card-footer">
         <pagination :data="posts" @pagination-change-page="getData"></pagination>
       </div>
     </div>
@@ -367,6 +369,9 @@ export default {
     .card-title {
       line-height: 36px;
     }
+  }
+  .pagination {
+    margin-bottom: 0px;
   }
 }
 .table-data {

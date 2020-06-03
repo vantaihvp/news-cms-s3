@@ -18,9 +18,15 @@
             <span class="hidden-xs">{{ this.$auth.user().user.name }}</span>
           </a>
           <ul class="dropdown-menu" style="width: 150px">
-            <a href="#" class="dropdown-item">
+            <router-link
+              :to="{
+                  name: 'user-edit',
+                  params: { id: this.$auth.user().user.id }
+              }"
+              class="dropdown-item"
+            >
               <i class="fal fa-user"></i> Xem hồ sơ
-            </a>
+            </router-link>
             <a href="#" @click.prevent="logout()" class="dropdown-item">
               <i class="fal fa-power-off"></i> Thoát
             </a>

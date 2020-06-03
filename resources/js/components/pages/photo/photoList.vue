@@ -1,45 +1,47 @@
 <template>
-  <section>
+  <section class="page-photos-list">
     <div class="row mb-4">
       <div class="col-lg-12 margin-tb">
         <div class="float-left">
           <h2>Photos</h2>
-        </div>
-        <div class="float-right">
-          <div class="d-flex">
-            <div class="button-box">
-              <router-link
-                :to="{ name: 'category-create' }"
-                class="btn btn-primary"
-                v-if="this.$can('category-create')"
-              >Thêm mới</router-link>
-            </div>
-          </div>
         </div>
       </div>
     </div>
     <div class="card border-0 shadow-none">
       <div class="card-body">
         <div id="block-upload">
-          <div v-if="success != ''" class="alert alert-success" role="alert">{{success}}</div>
           <form @submit="uploadPhoto" enctype="multipart/form-data">
-            <div class="custom-file">
-              <strong>Image:</strong>
-              <input type="file" class="form-control custom-file-input" v-on:change="onImageChange" />
-              <label class="custom-file-label" for="customFile">Choose file</label>
+            <div class="form-row">
+              <div class="col">
+                <div class="custom-file">
+                  <strong>Image:</strong>
+                  <input
+                    type="file"
+                    class="form-control custom-file-input"
+                    v-on:change="onImageChange"
+                    style="position: absolute;top: 0;"
+                  />
+                  <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-success">Submit</button>
+              </div>
             </div>
-            <button class="btn btn-success">Submit</button>
           </form>
         </div>
       </div>
     </div>
     <div class="card border-0 shadow-none">
       <div class="card-body">
-        <div class="row">
-          <div class="col-md-2 col-lg-1" v-for="photo in photos" :key="photo.id">
+        <ul class="list-photos">
+          <li v-for="photo in photos.data" :key="photo.id">
             <img :src="'/images/'+photo.url" class="img-fluid" />
-          </div>
-        </div>
+          </li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <pagination :data="photos" @pagination-change-page="getData"></pagination>
       </div>
     </div>
   </section>
@@ -48,26 +50,19 @@
 import toastr from "toastr";
 import "toastr/build/toastr.min.css";
 export default {
-  props: {
-    message: "",
-    status: ""
-  },
   data() {
     return {
-      error: {},
       photos: {},
       image: "",
-      success: "",
       searchText: ""
     };
   },
   created() {
-    this.getData();
+    this.getData(1);
   },
   methods: {
     uploadPhoto(e) {
       e.preventDefault();
-      let currentObj = this;
       const config = {
         headers: { "content-type": "multipart/form-data" }
       };
@@ -75,20 +70,27 @@ export default {
       formData.append("image", this.image);
       axios
         .post("/auth/photos", formData, config)
-        .then(function(response) {
-          currentObj.success = response.data.success;
-          this.getData();
+        .then(response => {
+          this.photos.data.unshift(response.data.success);
+          toastr.success("Thành công", "Upload thành công");
         })
         .catch(function(error) {
-          currentObj.output = error;
+          console.log(error);
+          toastr.error("Lỗi", "Upload không thành công");
         });
     },
     onImageChange(e) {
       console.log(e.target.files[0]);
       this.image = e.target.files[0];
     },
-    getData() {
+    getData(page) {
       let paramsData = {};
+      if (typeof page === "undefined") {
+        paramsData["page"] = 1;
+      } else {
+        paramsData["page"] = page;
+      }
+      paramsData["per_page"] = 30;
       if (this.searchText) {
         paramsData["s"] = this.searchText;
       }
@@ -100,4 +102,23 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.page-photos-list {
+  .list-photos {
+    padding-left: 0px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    li {
+      list-style: none;
+      width: 150px;
+      img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        padding: 5px;
+      }
+    }
+  }
+}
+</style>

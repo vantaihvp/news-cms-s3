@@ -1,17 +1,7 @@
 <template>
   <div class="thumbnail-modal">
-    <img
-      src="/images/admin/placeholder.png"
-      class="img-fluid img-thumbnail"
-      v-if="thumbnailSelected.url == ''"
-    />
-    <img
-      :src="'/images/' + thumbnailSelected.url"
-      class="img-fluid img-thumbnail"
-      v-if="thumbnailSelected.url"
-    />
     <a class="chosse-image" href="#" v-on:click="showThumbnailModal()">Chọn ảnh</a>
-    <div class="modal" id="uploadThumbnailModal">
+    <div class="modal upload-thumbnail-modal" :id="'uploadThumbnailModal-'+id">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <!-- Modal Header -->
@@ -32,7 +22,9 @@
                             <input
                               type="file"
                               class="form-control custom-file-input"
-                              v-on:change="onImageChange"
+                              v-on:change="
+                                                                onImageChange
+                                                            "
                             />
                             <label class="custom-file-label" for="customFile">Choose file</label>
                           </div>
@@ -47,15 +39,23 @@
                 <div class="menu-item-browse">
                   <div class="block-photos">
                     <ul class="photos">
-                      <li v-for="photo in photos" :key="photo.id">
+                      <li v-for="photo in photos.data" :key="photo.id">
                         <img
-                          :src="'/images/' + photo.url"
+                          :src="
+                                                        '/images/' + photo.url
+                                                    "
                           v-on:click="detailThumbnail"
                           :data-id="photo.id"
-                          v-bind:class="{active: thumbnailSelected.id == photo.id,'img-thumbnail img-fluid w-100': true}"
+                          v-bind:class="{
+                                                        active:
+                                                            thumbnailSelected.id ==
+                                                            photo.id,
+                                                        'img-thumbnail img-fluid w-100': true
+                                                    }"
                         />
                       </li>
                     </ul>
+                    <pagination :data="photos" @pagination-change-page="getData"></pagination>
                   </div>
                 </div>
               </div>
@@ -68,7 +68,10 @@
                       v-if="thumbnailSelected.url == ''"
                     />
                     <img
-                      :src="'/images/' +thumbnailSelected.url "
+                      :src="
+                                                '/images/' +
+                                                    thumbnailSelected.url
+                                            "
                       class="img-fluid img-thumbnail"
                       v-if="thumbnailSelected.url"
                     />
@@ -80,7 +83,9 @@
                         name="title"
                         class="form-control"
                         placeholder="Title"
-                        v-model="thumbnailSelected.title"
+                        v-model="
+                                                    thumbnailSelected.title
+                                                "
                       />
                     </div>
                     <div class="form-group">
@@ -100,7 +105,9 @@
                         name="caption"
                         class="form-control"
                         placeholder="Caption"
-                        v-model="thumbnailSelected.caption"
+                        v-model="
+                                                    thumbnailSelected.caption
+                                                "
                       />
                     </div>
                     <div class="form-group">
@@ -110,7 +117,9 @@
                         name="description"
                         rows="3"
                         placeholder="Description"
-                        v-model="thumbnailSelected.description"
+                        v-model="
+                                                    thumbnailSelected.description
+                                                "
                       ></textarea>
                     </div>
                     <div class="form-group">
@@ -147,6 +156,12 @@ export default {
     status: "",
     thumbnail_id: {
       type: [String, Number]
+    },
+    value: {
+      type: [String, Number, Object]
+    },
+    id: {
+      type: [String]
     }
   },
   data() {
@@ -168,12 +183,12 @@ export default {
     };
   },
   created() {
-    this.getData();
     this.getThumbnailPost();
   },
   methods: {
     showThumbnailModal(e) {
-      $("#uploadThumbnailModal").modal();
+      this.getData(1);
+      $("#uploadThumbnailModal-" + this.id).modal();
     },
     uploadThumbnailModal(e) {
       e.preventDefault();
@@ -187,7 +202,7 @@ export default {
         .post("/auth/photos", formData, config)
         .then(response => {
           currentObj.success = response.data.success;
-          this.photos.unshift(response.data.success);
+          this.photos.data.unshift(response.data.success);
         })
         .catch(function(error) {
           currentObj.output = error;
@@ -196,8 +211,13 @@ export default {
     onImageChange(e) {
       this.image = e.target.files[0];
     },
-    getData() {
+    getData(page) {
       let paramsData = {};
+      if (typeof page === "undefined") {
+        paramsData["page"] = 1;
+      } else {
+        paramsData["page"] = page;
+      }
       if (this.searchText) {
         paramsData["s"] = this.searchText;
       }
@@ -219,8 +239,11 @@ export default {
     },
     setThumbnail() {
       if (this.thumbnailSelected.id) {
-        this.$emit("updateThumbnailId", this.thumbnailSelected.id);
-        $("#uploadThumbnailModal").modal("hide");
+        this.$emit("input", this.thumbnailSelected.id);
+        let obj = this.thumbnailSelected;
+        obj.type = this.id;
+        this.$emit("changeThumbnail", obj);
+        $(".upload-thumbnail-modal").modal("hide");
       } else {
         toastr.error("Lỗi", "Chưa chọn ảnh");
       }
@@ -235,16 +258,33 @@ export default {
         description: "",
         url: ""
       };
-      $("#uploadThumbnailModal").modal("hide");
+      $(".upload-thumbnail-modal").modal("hide");
     },
     getThumbnailPost() {
-      if (this.thumbnail_id) {
-        axios.get("auth/photos/" + this.thumbnail_id).then(data => {
+      if (this.value) {
+        axios.get("auth/photos/" + this.value).then(data => {
           let thumbnail = data.data.success;
           this.thumbnailSelected.url = thumbnail.url;
-          this.thumbnailSelected.id = this.thumbnail_id;
+          this.thumbnailSelected.id = this.value;
           this.setThumbnail();
         });
+      }
+    },
+    deletePhoto() {
+      let cf = confirm("Bán muốn xóa ảnh này?");
+      if (cf) {
+        axios
+          .delete("auth/photos/" + this.thumbnailSelected.id)
+          .then(rs => {
+            if (rs.data.success) {
+              this.$toastr.success("Thành công", "Xóa thành công");
+              this.getData(1);
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            this.$toastr.error("Lỗi", "Xóa không thành công");
+          });
       }
     }
   }
@@ -259,7 +299,7 @@ export default {
     margin-bottom: 10px;
   }
 }
-#uploadThumbnailModal {
+.upload-thumbnail-modal {
   .custom-file-input {
     position: absolute;
     top: 0;

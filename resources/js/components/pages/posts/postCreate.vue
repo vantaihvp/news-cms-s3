@@ -39,22 +39,16 @@
                   <textarea class="form-control" v-model="post.excerpt" rows="3"></textarea>
                 </div>
               </div>
-              <div class="col-md-12">
-                <div class="form-group">
-                  <input
-                    type="checkbox"
-                    v-model="post.is_featured"
-                    name="is_featured"
-                    id="is_featured"
-                    data-bootstrap-switch
-                  />
-                  <label for="is_featured">Nổi bật</label>
-                </div>
-              </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                   <label>Nội dung</label>
-                  <ckeditor v-model="post.description"></ckeditor>
+                  <MediaContent ref="mediacontent" @insertMedia="insertMedia($event)" />
+                  <tinymce
+                    id="d1"
+                    v-model="post.description"
+                    :other_options="tinymceOptions"
+                    ref="tm"
+                  ></tinymce>
                 </div>
               </div>
             </div>
@@ -355,6 +349,48 @@
             ></multiselect>
           </div>
         </div>
+        <div class="card shadow-none card-post-highlight">
+          <div class="card-header">
+            <div class="float-left">
+              <h4 class="card-title">Highlight</h4>
+            </div>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <input
+                type="checkbox"
+                v-model="post.is_featured"
+                name="is_featured"
+                id="is_featured"
+                data-bootstrap-switch
+              />
+              <label for="is_featured">Highlight</label>
+            </div>
+            <div class="form-group" v-if="post.is_featured">
+              <img
+                src="/images/admin/placeholder.png"
+                class="img-fluid img-thumbnail"
+                v-if="thumbnailHighlight.url == ''"
+              />
+              <img
+                :src="'/images/' + thumbnailHighlight.url"
+                class="img-fluid img-thumbnail"
+                v-if="thumbnailHighlight.url"
+              />
+              <ThumbnailModal
+                v-model="post.thumbnail_highlight"
+                id="highlight"
+                key="highlight"
+                @changeThumbnail="changeThumbnail($event)"
+              />
+            </div>
+          </div>
+        </div>
         <div class="card shadow-none card-post-thumbnail">
           <div class="card-header">
             <div class="float-left">
@@ -367,9 +403,21 @@
             </div>
           </div>
           <div class="card-body">
+            <img
+              src="/images/admin/placeholder.png"
+              class="img-fluid img-thumbnail"
+              v-if="thumbnail.url == ''"
+            />
+            <img
+              :src="'/images/' + thumbnail.url"
+              class="img-fluid img-thumbnail"
+              v-if="thumbnail.url"
+            />
             <ThumbnailModal
-              :thumbnail_id="post.thumbnail_id"
-              @updateThumbnailId="post.thumbnail_id = $event"
+              v-model="post.thumbnail_id"
+              id="thumbnail"
+              key="thumbnail"
+              @changeThumbnail="changeThumbnail($event)"
             />
           </div>
         </div>
@@ -404,10 +452,14 @@
 
 <script>
 import SearchEngineOptimize from "./../widgets/SearchEngineOptimize";
+// import tinymce from "vue-tinymce-editor";
+// import "../../../plugins/tinymce/vantai";
 var moment = require("moment");
+import MediaContent from "../widgets/MediaContent";
 export default {
   components: {
-    SearchEngineOptimize
+    SearchEngineOptimize,
+    MediaContent
   },
   data() {
     return {
@@ -426,7 +478,14 @@ export default {
         role_id: "0",
         format: "default",
         thumbnail_id: "",
+        thumbnail_highlight: "",
         url_video: ""
+      },
+      thumbnail: {
+        url: ""
+      },
+      thumbnailHighlight: {
+        url: ""
       },
       categories: [],
       selectedCategories: [],
@@ -448,10 +507,23 @@ export default {
         parse: value => {
           return value ? moment(value, "DD/MM/YYYY H:mm:ss").toDate() : null;
         }
-      }
+      },
+      tinymceOptions: {}
     };
   },
   methods: {
+    changeThumbnail(obj) {
+      console.log(obj);
+      if (obj.type === "highlight") {
+        this.thumbnailHighlight.url = obj.url;
+      } else {
+        this.thumbnail.url = obj.url;
+      }
+    },
+    insertMedia(media_url) {
+      let tagImg = `<img src="${media_url}" data-mce-src="${media_url}"/>`;
+      this.$refs.tm.editor.insertContent(tagImg);
+    },
     getRoles() {
       axios
         .get("/auth/roles")

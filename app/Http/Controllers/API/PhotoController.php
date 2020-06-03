@@ -19,7 +19,7 @@ class PhotoController extends Controller
      */
     public function index(Request $request)
     {
-        $rs = $this->photoRepository->getAll();
+        $rs = $this->photoRepository->getWithPaginate($request);
         return response()->json(['success'=>$rs]);
     }
 
@@ -41,9 +41,6 @@ class PhotoController extends Controller
      */
     public function store(Request $request)
     {
-        // $this->validate($request, [
-        //     'title' => 'required'
-        // ]);
         $imageName = time().'.'.$request->image->getClientOriginalExtension();
         $request->image->move(public_path('images/frontend/post'), $imageName);
         $data = $request->all();
@@ -92,7 +89,12 @@ class PhotoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $attributes = $request->all();
+        unset($attributes['url']);
+        $data = $this->photoRepository->update($id,$attributes);
+        if($data){
+            return response()->json(['success'=>$data]);
+        }
     }
 
     /**
@@ -103,6 +105,16 @@ class PhotoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = $this->photoRepository->find($id);
+        // return public_path('images').$data->url;
+        if(unlink(public_path('images').$data->url)){
+            $rs = $this->photoRepository->delete($id);
+            if($rs){
+                return response()->json(['success'=>true]);
+            }
+            return response()->json(['error'=>$id]);
+        }
+        return response()->json(['error'=>$id]);
+        
     }
 }

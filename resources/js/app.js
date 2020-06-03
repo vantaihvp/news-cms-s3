@@ -16,17 +16,16 @@ import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
 import VueToastr2 from "vue-toastr-2";
 import "vue-toastr-2/dist/vue-toastr-2.min.css";
-import CKEditor from 'ckeditor4-vue';
-
 window.toastr = require("toastr");
-
+window.urlWeb = 'http://127.0.0.1:8000';
+import tinymce from 'vue-tinymce-editor';
 Vue.mixin(Permissions);
 // Set Vue globally
 window.Vue = Vue;
 // Set Vue router
 Vue.router = router;
+Vue.component('tinymce', tinymce)
 Vue.use(VueRouter);
-Vue.use(CKEditor);
 Vue.use(VueToastr2);
 Vue.use(DatePicker);
 // Set Vue authentication

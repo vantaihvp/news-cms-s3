@@ -15,6 +15,7 @@ class Posts extends Model
         'status',
         'format',
         'thumbnail_id',
+        'thumbnail_highlight',
         'author_name',
         'design_name',
         'layout_name',

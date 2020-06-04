@@ -57,6 +57,12 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
             $dateEnd = Carbon::parse($attributes->dateTime[1]);
             $rs->whereBetween('date',array($dateStart,$dateEnd));
         }
+        if($attributes->filled('is_featured')){
+            $rs->where('is_featured',$attributes->is_featured);
+        }
+        if($attributes->filled('slug')){
+            $rs->where('slug',$attributes->slug);
+        }
         $rs = $rs->paginate($per_page);
         foreach ($rs as $key => $post) {
             $post['user_name'] = User::find($post->user_id)->name;

@@ -7,6 +7,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 use DB;
+use Hash;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Post\Category\CategoryRepositoryInterface;
 class UserController extends Controller 

@@ -7,6 +7,20 @@
           <!-- Modal Header -->
           <div class="modal-header bg-primary">
             <h4 class="modal-title">Chọn ảnh đại diện</h4>
+            <div class="card-tools">
+              <div class="input-group input-group">
+                <input type="text" class="form-control" v-model="searchText" />
+                <span class="input-group-append">
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    @click.prevent="resetSearch"
+                    v-if="searchText"
+                  >X</button>
+                  <button type="submit" class="btn btn-success" @click.prevent="getData(1)">Tìm</button>
+                </span>
+              </div>
+            </div>
           </div>
           <!-- Modal body -->
           <div class="modal-body">
@@ -286,6 +300,10 @@ export default {
             this.$toastr.error("Lỗi", "Xóa không thành công");
           });
       }
+    },
+    resetSearch() {
+      this.searchText = "";
+      this.getData(1);
     }
   }
 };
@@ -337,6 +355,8 @@ export default {
   .block-photos {
     .img-thumbnail {
       cursor: pointer;
+      object-fit: cover;
+      height: 150px;
       &.active {
         border: 3px solid #4db2ec;
       }

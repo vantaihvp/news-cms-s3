@@ -1,8 +1,30 @@
 <template>
   <section class="post-list">
-    <div class="card card-outline card-info shadow-none card-search">
+    <div class="card card-outline card-info shadow-none card-search collapsed-card">
+      <div class="card-header">
+        <div class="float-left">
+          <h4 class="card-title">Tìm kiếm</h4>
+        </div>
+        <div class="card-tools">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
       <div class="card-body">
         <form @submit.prevent="getData(1)">
+          <div class="row">
+            <div class="col-md-12">
+              <small class="text-muted">Tiêu đề</small>
+              <div class="input-group input-group">
+                <input type="text" class="form-control" v-model="searchText" />
+                <span class="input-group-append">
+                  <button type="button" class="btn btn-danger" @click="resetData()">X</button>
+                  <button type="submit" class="btn btn-primary">Tìm</button>
+                </span>
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="col-md-2">
               <div class="form-group">
@@ -88,13 +110,14 @@
               </div>
             </div>
             <div class="col-md-2">
-              <small class="text-muted">Tiêu đề</small>
-              <div class="input-group input-group">
-                <input type="text" class="form-control" v-model="searchText" />
-                <span class="input-group-append">
-                  <button type="button" class="btn btn-danger" @click="resetData()">X</button>
-                  <button type="submit" class="btn btn-primary">Tìm</button>
-                </span>
+              <small class="text-muted">Định dạng</small>
+              <div class="form-group">
+                <select class="form-control" v-model="post_format">
+                  <option value="0">Tất cả</option>
+                  <option value="featured">Highlight</option>
+                  <option value="default">Default</option>
+                  <option value="video">Video</option>
+                </select>
               </div>
             </div>
           </div>
@@ -198,6 +221,7 @@ export default {
         { text: "Bản nháp", value: "draft" },
         { text: "Riêng tư", value: "private" }
       ],
+      post_format: 0,
       post_status: 0,
       dateTime: [],
       selectedAuthors: [],
@@ -232,6 +256,7 @@ export default {
       this.dateTime = "";
       this.filter_author = 0;
       this.post_status = 0;
+      this.post_format = 0;
       this.selectedCategories = [];
       this.getData(1);
     },
@@ -261,6 +286,12 @@ export default {
       }
       if (this.post_status) {
         paramsData.status = this.post_status;
+      }
+      if (this.post_format === "video" || this.post_format === "default") {
+        paramsData.format = this.post_format;
+      }
+      if (this.post_format === "featured") {
+        paramsData.is_featured = 1;
       }
       if (this.selectedCategories.length) {
         let categories = [];

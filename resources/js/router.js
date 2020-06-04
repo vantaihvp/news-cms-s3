@@ -141,7 +141,7 @@ const routes = [{
                 }, ]
             },
             {
-                path: "user",
+                path: "users",
                 name: "user-dashboard",
                 component: UserDashboard,
                 children: [{

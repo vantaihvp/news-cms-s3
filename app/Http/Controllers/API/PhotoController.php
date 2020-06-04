@@ -105,6 +105,9 @@ class PhotoController extends Controller
      */
     public function destroy($id)
     {
+        if($id==1){
+            return response()->json(['error'=>'Không thể xóa hình này'],400);
+        }
         $data = $this->photoRepository->find($id);
         // return public_path('images').$data->url;
         if(unlink(public_path('images').$data->url)){

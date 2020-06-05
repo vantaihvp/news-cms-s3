@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('posts','API\PostController');
+Route::get('categories', 'API\CategoryController@getCategories');
+Route::get('categories/{id}', 'API\CategoryController@show');
+Route::get('tags', 'API\CategoryController@getTags');
+Route::get('tags/{id}', 'API\CategoryController@show');
 Route::prefix('auth')->group(function () {
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');

@@ -17,7 +17,7 @@ import "vue2-datepicker/index.css";
 import VueToastr2 from "vue-toastr-2";
 import "vue-toastr-2/dist/vue-toastr-2.min.css";
 window.toastr = require("toastr");
-window.urlWeb = 'http://127.0.0.1:8000';
+window.urlWeb = `${process.env.MIX_APP_URL}`;
 import tinymce from 'vue-tinymce-editor';
 Vue.mixin(Permissions);
 // Set Vue globally

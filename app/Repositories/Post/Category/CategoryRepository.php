@@ -22,19 +22,34 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
         $data = $data->paginate($per_page);
         return $data;
     }
-    public function getTags($per_page,$term=''){
+    public function getTags($attributes){
         $data = $this->_model->where('taxonomy','tag')->orderBy('id','DESC');
-        if($term){
-            $data->where('title','LIKE',"%$term%");
+        
+        $per_page = 10;
+        if($attributes->filled('per_page')){
+            $per_page = $attributes->get('per_page');
         }
+        if($attributes->filled('s')){
+            $s = $attributes['s'];
+            $data->where('title','LIKE',"%$s%");
+        }
+        if($attributes->filled('include')){
+            $include = explode(',',$attributes->get('include'));
+            $data->whereIn('id',$include);
+        }
+
         $data = $data->paginate($per_page);
         return $data;
     }
     public function getCategories($attributes){
         $data = $this->_model->where('taxonomy','category')->orderBy('id','DESC');
         if($attributes->filled('s')){
-            $s = $attributes->get('s');
+            $s = $attributes['s'];
             $data->where('title','LIKE',"%$s%");
+        }
+        if($attributes->filled('include')){
+            $include = explode(',',$attributes->get('include'));
+            $data->whereIn('id',$include);
         }
         $data = $data->get();
         return $data;

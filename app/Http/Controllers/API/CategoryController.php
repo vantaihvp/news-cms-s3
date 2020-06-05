@@ -19,9 +19,9 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        
     }
 
     public function getAll(){
@@ -39,15 +39,7 @@ class CategoryController extends Controller
     }
 
     public function getTags(Request $request){
-        $term = '';
-        $per_page = 10;
-        if($request->filled('s')){
-            $term = $request->get('s');
-        }
-        if($request->filled('per_page')){
-            $per_page = $request->get('per_page');
-        }
-        $rs = $this->categoryRepository->getTags($per_page,$term);
+        $rs = $this->categoryRepository->getTags($request);
         return response()->json(['success'=>$rs]);
     }
 

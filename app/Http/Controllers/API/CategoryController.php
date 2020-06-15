@@ -144,7 +144,7 @@ class CategoryController extends Controller
                 $item['title'] = $char.$item['title'];
                 array_push($this->categories_array,$item);
                 unset($categories[$key]);
-                $this->sortCategories($categories, $item['id'], $char.'— ');
+                $this->sortCategories($categories, $item['id'], $char.'- ');
             }
         }
     }

@@ -153,8 +153,8 @@
               <tr>
                 <th scope="col" class="col-thumbnail">Thumbnail</th>
                 <th scope="col">Tiêu đề</th>
-                <th scope="col">Tác giả</th>
                 <th scope="col">Chuyên mục</th>
+                <th scope="col">Tác giả</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Date</th>
                 <th scope="col" class="text-center">Hành động</th>
@@ -166,8 +166,8 @@
                   <img :src="post.thumbnail_url" class="img-thumbnail" />
                 </td>
                 <td scope="col">{{ post.title }}</td>
-                <td scope="col">{{post.user_name}}</td>
                 <td scope="col">{{post.categories_name}}</td>
+                <td scope="col">{{post.user_name}}</td>
                 <td scope="col">{{post.status}}</td>
                 <td scope="col">{{post.date}}</td>
                 <td scope="col" class="text-center">

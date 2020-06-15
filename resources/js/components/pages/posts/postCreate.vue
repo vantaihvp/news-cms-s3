@@ -582,10 +582,6 @@ export default {
       this.post.layout_name = e.target.dataset.id;
     },
     submitPost() {
-      let tagArray = [];
-      this.selectedTags.forEach(e => {
-        tagArray.push(e.id);
-      });
       let relatedPostArray = [];
       this.selectedRelated.forEach(e => {
         relatedPostArray.push(e.id);
@@ -593,7 +589,7 @@ export default {
       let dataForm = this.post;
       dataForm.categories_id = this.selectedCategories;
       dataForm.related_posts = relatedPostArray;
-      dataForm.tags_id = tagArray;
+      dataForm.selectedTags = this.selectedTags;
       //create SEO
       let rs_seo = this.$refs.seoForm.createSeo();
       rs_seo.then(rs => {

@@ -160,7 +160,7 @@ export default {
         .post("auth/users", dataForm)
         .then(rs => {
           this.$router.push({
-            path: "/admin/user",
+            path: "/admin/users",
             params: { message: "Thêm thành công" }
           });
         })

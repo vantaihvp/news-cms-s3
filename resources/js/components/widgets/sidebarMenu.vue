@@ -51,6 +51,35 @@
           <p>Thư viện</p>
         </router-link>
       </li>
+
+      <li class="nav-item has-treeview" @click="toggleMenu">
+        <a href="#" class="nav-link">
+          <i class="fal fa-ad"></i>
+          <p>
+            Ads
+            <i class="fas fa-angle-left right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <router-link exact class="nav-link" :to="{ name: 'ads-banner-list' }">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Ads Banner</p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              exact
+              class="nav-link"
+              :to="{ name: 'ads-zone-list' }"
+              v-if="this.$can('ads-zone-list')"
+            >
+              <i class="far fa-circle nav-icon"></i>
+              <p>Ads Zone</p>
+            </router-link>
+          </li>
+        </ul>
+      </li>
       <li class="nav-item has-treeview" @click="toggleMenu">
         <a href="#" class="nav-link">
           <i class="fal fa-users"></i>

@@ -19,6 +19,7 @@ Route::get('categories', 'API\CategoryController@getCategories');
 Route::get('categories/{id}', 'API\CategoryController@show');
 Route::get('tags', 'API\CategoryController@getTags');
 Route::get('tags/{id}', 'API\CategoryController@show');
+Route::resource('ads-banner','API\AdsBannerController');
 Route::prefix('auth')->group(function () {
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
@@ -37,5 +38,7 @@ Route::prefix('auth')->group(function () {
         Route::get('permissions','RoleController@getAllPermissions');
         Route::resource('posts','API\PostController');
         Route::resource('seo','API\SeoController');
+        Route::resource('ads-banner','API\AdsBannerController');
+        Route::resource('ads-zone','API\AdsZoneController');
     });
 });

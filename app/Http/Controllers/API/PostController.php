@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Post\PostRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Post\Category\CategoryRepositoryInterface;
 class PostController extends Controller
 {
     protected $postRepository;
-    public function __construct(PostRepositoryInterface $postRepository)
+    protected $categoryRepository;
+    public function __construct(PostRepositoryInterface $postRepository,CategoryRepositoryInterface $categoryRepository)
     {
         $this->postRepository = $postRepository;
+        $this->categoryRepository = $categoryRepository;
     }
     /**
      * Display a listing of the resource.
@@ -49,7 +52,6 @@ class PostController extends Controller
         $data = $request->all();
         $data['user_id'] = $user->id;
         $data['date'] = Carbon::parse($request->date);
-        $data['tags_id'] = json_encode($request->tags_id);
         $data['categories_id'] = json_encode($request->categories_id);
         $data['related_posts'] = json_encode($request->related_posts);
         if($request->filled('slug')){
@@ -60,6 +62,21 @@ class PostController extends Controller
         if(!$request->thumbnail_id){
             $data['thumbnail_id'] = 1;
         }
+        $arrTags = array();
+        foreach ($request->selectedTags as $key => $item) {
+            if(!$this->categoryRepository->find($item['id'])){
+                $tags = array(
+                    'title' => $item['title'],
+                    'slug'  => $this->slugify($item['title']),
+                    'taxonomy' => 'tag',
+                    'user_id'   => $user->id,
+                );
+                $arrTags[] = $this->categoryRepository->create($tags)->id;
+            }else{
+                $arrTags[] = $item['id'];
+            }
+        }
+        $data['tags_id'] = json_encode($arrTags);
         $rs = $this->postRepository->create($data);
         if($rs){
             return response()->json(['success'=>$rs]);
@@ -112,6 +129,7 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $user = \Auth::user();
         $attributes = $request->all();
         $attributes['date'] = Carbon::parse($request->date);
         if($request->filled('slug')){
@@ -119,7 +137,21 @@ class PostController extends Controller
         }else{
             $attributes['slug'] = $this->slugify($request->get('title'));
         }
-        $attributes['tags_id'] = json_encode($request->tags_id);
+        $arrTags = array();
+        foreach ($request->selectedTags as $key => $item) {
+            if(!$this->categoryRepository->find($item['id'])){
+                $tags = array(
+                    'title' => $item['title'],
+                    'slug'  => $this->slugify($item['title']),
+                    'taxonomy' => 'tag',
+                    'user_id'   => $user->id,
+                );
+                $arrTags[] = $this->categoryRepository->create($tags)->id;
+            }else{
+                $arrTags[] = $item['id'];
+            }
+        }
+        $attributes['tags_id'] = json_encode($arrTags);
         $attributes['categories_id'] = json_encode($request->categories_id);
         $attributes['related_posts'] = json_encode($request->related_posts);
         $data = $this->postRepository->update($id,$attributes);

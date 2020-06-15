@@ -36,9 +36,19 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
             $categories = $attributes->get('categories');
             foreach ($categories as $key => $value) {
                 if($key==0){
-                    $rs->whereRaw('JSON_CONTAINS(categories_id, '.$value.')');
+                    $rs->whereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
                 }else{
-                    $rs->orwhereRaw('JSON_CONTAINS(categories_id, '.$value.')');
+                    $rs->orwhereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+                }
+            }
+        }
+        if($attributes->filled('categories_id')){
+            $categories = explode(',',$attributes->get('categories_id'));
+            foreach ($categories as $key => $value) {
+                if($key==0){
+                    $rs->whereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+                }else{
+                    $rs->orwhereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
                 }
             }
         }

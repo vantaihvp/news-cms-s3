@@ -519,7 +519,6 @@ export default {
   },
   methods: {
     changeThumbnail(obj) {
-      console.log(obj);
       if (obj.type === "highlight") {
         this.thumbnailHighlight.url = obj.url;
       } else {
@@ -631,10 +630,10 @@ export default {
       return `và ${count} lựa chọn khác`;
     },
     submitPost() {
-      let tagArray = [];
-      this.selectedTags.forEach(e => {
-        tagArray.push(e.id);
-      });
+      // let tagArray = [];
+      // this.selectedTags.forEach(e => {
+      //   tagArray.push(e.id);
+      // });
       let relatedPostArray = [];
       this.selectedRelated.forEach(e => {
         relatedPostArray.push(e.id);
@@ -642,7 +641,8 @@ export default {
       let dataForm = this.post;
       dataForm.categories_id = this.selectedCategories;
       dataForm.related_posts = relatedPostArray;
-      dataForm.tags_id = tagArray;
+      dataForm.selectedTags = this.selectedTags;
+      // dataForm.tags_id = tagArray;
       //update or create SEO
       let rs_seo = this.$refs.seoForm.updateSeo();
       rs_seo.then(rs => {

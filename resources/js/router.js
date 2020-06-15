@@ -31,6 +31,14 @@ import postCreate from "./components/pages/posts/postCreate";
 //Photos
 import photoDashboard from "./components/pages/photo/photoDashboard";
 import photoList from "./components/pages/photo/photoList";
+//Ads banner
+import adsBannerDashboard from "./components/pages/ads/adsBanner/adsBannerDashboard";
+import adsBannerList from "./components/pages/ads/adsBanner/adsBannerList";
+import adsBannerCreate from "./components/pages/ads/adsBanner/adsBannerCreate";
+//Ads zone
+import adsZoneDashboard from "./components/pages/ads/adsZone/adsZoneDashboard";
+import adsZoneList from "./components/pages/ads/adsZone/adsZoneList";
+import adsZoneCreate from "./components/pages/ads/adsZone/adsZoneCreate";
 // Routes
 const routes = [{
         path: "/",
@@ -139,6 +147,50 @@ const routes = [{
                     name: "photo.list",
                     component: photoList
                 }, ]
+            },
+            {
+                path: "ads-banner",
+                name: "ads-banner-dashboard",
+                component: adsBannerDashboard,
+                children: [{
+                        path: "",
+                        name: "ads-banner-list",
+                        component: adsBannerList
+                    },
+                    {
+                        path: "create",
+                        name: "ads-banner-create",
+                        component: adsBannerCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "ads-banner-edit",
+                        component: adsBannerCreate,
+                        props: true
+                    }
+                ]
+            },
+            {
+                path: "ads-zone",
+                name: "ads-zone-dashboard",
+                component: adsZoneDashboard,
+                children: [{
+                        path: "",
+                        name: "ads-zone-list",
+                        component: adsZoneList
+                    },
+                    {
+                        path: "create",
+                        name: "ads-zone-create",
+                        component: adsZoneCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "ads-zone-edit",
+                        component: adsZoneCreate,
+                        props: true
+                    }
+                ]
             },
             {
                 path: "users",

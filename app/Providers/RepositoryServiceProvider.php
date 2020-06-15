@@ -36,6 +36,14 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Seo\SeoRepositoryInterface::class,
             \App\Repositories\Seo\SeoRepository::class
         );
+        $this->app->singleton(
+            \App\Repositories\Ads\AdsBanner\AdsBannerRepositoryInterface::class,
+            \App\Repositories\Ads\AdsBanner\AdsBannerRepository::class
+        );
+        $this->app->singleton(
+            \App\Repositories\Ads\AdsZone\AdsZoneRepositoryInterface::class,
+            \App\Repositories\Ads\AdsZone\AdsZoneRepository::class
+        );
     }
 
     /**

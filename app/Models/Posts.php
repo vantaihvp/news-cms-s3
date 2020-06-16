@@ -13,6 +13,7 @@ class Posts extends Model
         'excerpt',
         'is_featured',
         'status',
+        'popular',
         'format',
         'thumbnail_id',
         'thumbnail_highlight',

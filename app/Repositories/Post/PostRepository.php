@@ -19,13 +19,15 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
         return \App\Models\Posts::class;
     }
     public function getWithPaginate($attributes){
+        $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7')->toDateTimeString();
+        // return $dt;
         $user = \Auth::user();
         $per_page   = $attributes['per_page'] ? $attributes['per_page'] : 10;
         $sortKey    = !empty($attributes['sortKey']) ? $attributes['sortKey'] : 'id';
         $sortValue  = !empty($attributes['sortValue']) ? $attributes['sortValue'] : 'DESC';
         $s          = !empty($attributes['s']) ? $attributes['s'] : '';
         $author_id  = !empty($attributes['author_id']) ? $attributes['author_id'] : '';
-        $rs = $this->_model->orderBy($sortKey,$sortValue);
+        $rs = $this->_model->where('date','<=',$dt)->orderBy($sortKey,$sortValue);
         if($s){
             $rs->where('title','LIKE',"%$s%");
         }
@@ -76,6 +78,9 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
         if($attributes->filled('format')){
             $rs->where('format',$attributes->format);
         }
+        if($attributes->filled('popular')){
+            $rs->where('popular',$attributes->popular);
+        }
         $rs = $rs->paginate($per_page);
         foreach ($rs as $key => $post) {
             $post['user_name'] = User::find($post->user_id)->name;
@@ -83,7 +88,10 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
                 $categories_arr = array();
                 $categories = json_decode($post->categories_id);
                 foreach ($categories as $key => $value) {
-                    $categories_arr[] = Categories::find($value)->title;
+                    try {
+                        $categories_arr[] = Categories::find($value)->title;
+                    } catch (\Throwable $th) {
+                    }
                 }
                 $post->categories_name = join(",", $categories_arr);
             }

@@ -155,6 +155,7 @@
                 <th scope="col">Tiêu đề</th>
                 <th scope="col">Chuyên mục</th>
                 <th scope="col">Tác giả</th>
+                <th scope="col" class="text-center">Quan tâm</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Date</th>
                 <th scope="col" class="text-center">Hành động</th>
@@ -168,6 +169,14 @@
                 <td scope="col">{{ post.title }}</td>
                 <td scope="col">{{post.categories_name}}</td>
                 <td scope="col">{{post.user_name}}</td>
+                <td scope="col" class="text-center popular">
+                  <i
+                    class="fas fa-star"
+                    v-if="post.popular"
+                    @click="setPopular(post.id,post.popular)"
+                  ></i>
+                  <i class="far fa-star" v-else @click="setPopular(post.id,post.popular)"></i>
+                </td>
                 <td scope="col">{{post.status}}</td>
                 <td scope="col">{{post.date}}</td>
                 <td scope="col" class="text-center">
@@ -373,6 +382,27 @@ export default {
         return true;
       }
       return false;
+    },
+    setPopular(id, popular) {
+      popular = !popular;
+      let dataForm = {
+        popular: popular
+      };
+      axios
+        .put("auth/posts/" + id, dataForm)
+        .then(rs => {
+          let post_id = rs.data.success.id;
+          this.$toastr.success("Thành công", "Chỉnh sửa thành công");
+          this.getData(1);
+        })
+        .catch(error => {
+          let list_error = "";
+          Object.values(error.response.data.errors).forEach(
+            e => (list_error += `<li>${e}</li>`)
+          );
+          this.errors = error.response.data.errors;
+          this.$toastr.error(list_error, "Lỗi");
+        });
     }
   }
 };
@@ -403,6 +433,13 @@ export default {
   }
   .pagination {
     margin-bottom: 0px;
+  }
+  .popular {
+    i {
+      cursor: pointer;
+      font-size: 20px;
+      color: #09c;
+    }
   }
 }
 .table-data {

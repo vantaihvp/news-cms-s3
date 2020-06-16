@@ -385,7 +385,7 @@
                 v-if="thumbnailHighlight.url"
               />
               <ThumbnailModal
-                v-if="post.thumbnail_highlight"
+                v-if="post.is_featured"
                 v-model="post.thumbnail_highlight"
                 id="highlight"
                 key="highlight"

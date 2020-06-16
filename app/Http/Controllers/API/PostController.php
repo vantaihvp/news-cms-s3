@@ -134,26 +134,32 @@ class PostController extends Controller
         $attributes['date'] = Carbon::parse($request->date);
         if($request->filled('slug')){
             $attributes['slug'] = $this->slugify($request->get('slug'));
-        }else{
+        }elseif($request->filled('title')){
             $attributes['slug'] = $this->slugify($request->get('title'));
         }
-        $arrTags = array();
-        foreach ($request->selectedTags as $key => $item) {
-            if(!$this->categoryRepository->find($item['id'])){
-                $tags = array(
-                    'title' => $item['title'],
-                    'slug'  => $this->slugify($item['title']),
-                    'taxonomy' => 'tag',
-                    'user_id'   => $user->id,
-                );
-                $arrTags[] = $this->categoryRepository->create($tags)->id;
-            }else{
-                $arrTags[] = $item['id'];
+        if($request->filled('selectedTags')){
+            $arrTags = array();
+            foreach ($request->selectedTags as $key => $item) {
+                if(!$this->categoryRepository->find($item['id'])){
+                    $tags = array(
+                        'title' => $item['title'],
+                        'slug'  => $this->slugify($item['title']),
+                        'taxonomy' => 'tag',
+                        'user_id'   => $user->id,
+                    );
+                    $arrTags[] = $this->categoryRepository->create($tags)->id;
+                }else{
+                    $arrTags[] = $item['id'];
+                }
             }
+            $attributes['tags_id'] = json_encode($arrTags);
         }
-        $attributes['tags_id'] = json_encode($arrTags);
-        $attributes['categories_id'] = json_encode($request->categories_id);
-        $attributes['related_posts'] = json_encode($request->related_posts);
+        if($request->filled('categories_id')){
+            $attributes['categories_id'] = json_encode($request->categories_id);
+        }
+        if($request->filled('related_posts')){
+            $attributes['related_posts'] = json_encode($request->related_posts);
+        }
         $data = $this->postRepository->update($id,$attributes);
         if($data){
             return response()->json(['success'=>$data]);

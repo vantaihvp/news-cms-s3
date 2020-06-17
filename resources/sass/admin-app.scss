@@ -1,4 +1,9 @@
-.lable-required:after{
+.lable-required:after {
+    content: '*';
+    color: #f00;
+}
+
+.label-required:after {
     content: '*';
     color: #f00;
 }

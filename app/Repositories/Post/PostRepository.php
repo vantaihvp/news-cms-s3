@@ -54,6 +54,16 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
                 }
             }
         }
+        if($attributes->filled('tags_id')){
+            $tags_id = explode(',',$attributes->get('tags_id'));
+            foreach ($tags_id as $key => $value) {
+                if($key==0){
+                    $rs->whereRaw('JSON_CONTAINS(tags_id, "'.$value.'")');
+                }else{
+                    $rs->orwhereRaw('JSON_CONTAINS(tags_id, "'.$value.'")');
+                }
+            }
+        }
         if($user){
             if($attributes->filled('status')){
                 $rs->where('status',$attributes->status);
@@ -80,6 +90,14 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
         }
         if($attributes->filled('popular')){
             $rs->where('popular',$attributes->popular);
+        }
+        if($attributes->filled('include')){
+            $include = explode(',',$attributes->get('include'));
+            $rs->whereIn('id',$include);
+        }
+        if($attributes->filled('exclude')){
+            $exclude = explode(',',$attributes->get('exclude'));
+            $rs->whereNotIn('id',$exclude);
         }
         $rs = $rs->paginate($per_page);
         foreach ($rs as $key => $post) {

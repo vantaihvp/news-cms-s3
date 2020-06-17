@@ -253,6 +253,11 @@ html.os-html,html.os-html>.os-host{display:block;overflow:hidden;box-sizing:bord
   color: #f00;
 }
 
+.label-required:after {
+  content: "*";
+  color: #f00;
+}
+
 /*!
  * Bootstrap v4.4.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors

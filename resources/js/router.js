@@ -39,6 +39,10 @@ import adsBannerCreate from "./components/pages/ads/adsBanner/adsBannerCreate";
 import adsZoneDashboard from "./components/pages/ads/adsZone/adsZoneDashboard";
 import adsZoneList from "./components/pages/ads/adsZone/adsZoneList";
 import adsZoneCreate from "./components/pages/ads/adsZone/adsZoneCreate";
+//Menu
+import menuDashboard from "./components/pages/menu/menuDashboard";
+import menuList from "./components/pages/menu/menuList";
+import menuCreate from "./components/pages/menu/menuCreate";
 // Routes
 const routes = [{
         path: "/",
@@ -188,6 +192,28 @@ const routes = [{
                         path: "edit/:id",
                         name: "ads-zone-edit",
                         component: adsZoneCreate,
+                        props: true
+                    }
+                ]
+            },
+            {
+                path: "menu",
+                name: "menu-dashboard",
+                component: menuDashboard,
+                children: [{
+                        path: "",
+                        name: "menu-list",
+                        component: menuList
+                    },
+                    {
+                        path: "create",
+                        name: "menu-create",
+                        component: menuCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "menu-edit",
+                        component: menuCreate,
                         props: true
                     }
                 ]

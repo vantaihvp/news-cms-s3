@@ -44,6 +44,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Ads\AdsZone\AdsZoneRepositoryInterface::class,
             \App\Repositories\Ads\AdsZone\AdsZoneRepository::class
         );
+        $this->app->singleton(
+            \App\Repositories\Menu\MenuRepositoryInterface::class,
+            \App\Repositories\Menu\MenuRepository::class
+        );
     }
 
     /**

@@ -20,6 +20,7 @@ Route::get('categories/{id}', 'API\CategoryController@show');
 Route::get('tags', 'API\CategoryController@getTags');
 Route::get('tags/{id}', 'API\CategoryController@show');
 Route::resource('ads-banner','API\AdsBannerController');
+Route::resource('menu','API\MenuController');
 Route::prefix('auth')->group(function () {
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');

@@ -266,7 +266,7 @@ export default {
     },
     setThumbnail() {
       if (this.thumbnailSelected.id) {
-        this.$emit("insertMedia", this.thumbnailSelected.url);
+        this.$emit("insertMedia", this.thumbnailSelected);
         $("#uploadMediaContent").modal("hide");
       } else {
         toastr.error("Lỗi", "Chưa chọn ảnh");

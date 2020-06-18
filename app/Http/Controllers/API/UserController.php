@@ -94,6 +94,12 @@ class UserController extends Controller
     public function show($id)
     {
         $user = $this->userRepository->find($id);
+        if(!Auth::user()){
+            $data['id'] = $user->id;
+            $data['name'] = $user->name;
+            $data['pseudonym'] = $user->pseudonym;
+            return response()->json(['success'=> $data]);
+        }
         $userRole = $user->roles->pluck('name','name')->all();
         $data = array('user' => $user, 'userRole'=>$userRole);
         if($user){

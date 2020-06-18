@@ -40,7 +40,7 @@
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="form-group">
+                <div class="form-group form-content">
                   <label>Nội dung</label>
                   <MediaContent ref="mediacontent" @insertMedia="insertMedia($event)" />
                   <tinymce
@@ -525,9 +525,10 @@ export default {
         this.thumbnail.url = obj.url;
       }
     },
-    insertMedia(media_url) {
-      let tagImg = `<img src="${media_url}" data-mce-src="${media_url}"/>`;
-      this.$refs.tm.editor.insertContent(tagImg);
+    insertMedia(photo) {
+      let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}"/>`;
+      let caption = `<p class="wp-caption-text">${photo.caption}</p>`;
+      this.$refs.tm.editor.insertContent(tagImg + caption);
     },
     getData() {
       axios
@@ -630,10 +631,6 @@ export default {
       return `và ${count} lựa chọn khác`;
     },
     submitPost() {
-      // let tagArray = [];
-      // this.selectedTags.forEach(e => {
-      //   tagArray.push(e.id);
-      // });
       let relatedPostArray = [];
       this.selectedRelated.forEach(e => {
         relatedPostArray.push(e.id);

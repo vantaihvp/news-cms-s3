@@ -520,9 +520,10 @@ export default {
         this.thumbnail.url = obj.url;
       }
     },
-    insertMedia(media_url) {
-      let tagImg = `<img src="${media_url}" data-mce-src="${media_url}"/>`;
-      this.$refs.tm.editor.insertContent(tagImg);
+    insertMedia(photo) {
+      let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}"/>`;
+      let caption = `<p class="wp-caption-text">${photo.caption}</p>`;
+      this.$refs.tm.editor.insertContent(tagImg + caption);
     },
     getRoles() {
       axios

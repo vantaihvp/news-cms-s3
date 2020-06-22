@@ -514,7 +514,11 @@ export default {
           return value ? moment(value, "DD/MM/YYYY H:mm:ss").toDate() : null;
         }
       },
-      tinymceOptions: {}
+      tinymceOptions: {
+        convert_urls: true,
+        relative_urls: false,
+        remove_script_host: false
+      }
     };
   },
   methods: {

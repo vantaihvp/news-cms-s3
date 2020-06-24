@@ -158,7 +158,7 @@
                 <th scope="col" class="text-center">Quan tâm</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Date</th>
-                <th scope="col" class="text-center">Hành động</th>
+                <th scope="col" class="text-center col-action-inner">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -180,23 +180,25 @@
                 <td scope="col">{{post.status}}</td>
                 <td scope="col">{{post.date}}</td>
                 <td scope="col" class="text-center">
-                  <router-link
-                    :to="{
+                  <div class="col-action-inner">
+                    <router-link
+                      :to="{
                         name: 'post-edit',
                         params: { id: post.id }
                     }"
-                    v-if="is_edit_post(post)"
-                    class="btn btn-warning"
-                  >
-                    <i class="far fa-pencil"></i>
-                  </router-link>
-                  <button
-                    class="btn btn-danger"
-                    @click="deletePost(post.id)"
-                    v-if="is_delete_post(post)"
-                  >
-                    <i class="far fa-trash"></i>
-                  </button>
+                      v-if="is_edit_post(post)"
+                      class="btn btn-warning"
+                    >
+                      <i class="far fa-pencil"></i>
+                    </router-link>
+                    <button
+                      class="btn btn-danger"
+                      @click="deletePost(post.id)"
+                      v-if="is_delete_post(post)"
+                    >
+                      <i class="far fa-trash"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -450,6 +452,9 @@ export default {
     height: 70px;
     width: 70px;
     object-fit: cover;
+  }
+  .col-action-inner {
+    width: 120px;
   }
 }
 </style>

@@ -38,6 +38,7 @@ Route::prefix('auth')->group(function () {
         Route::resource('users', 'API\UserController');
         Route::resource('roles','RoleController');
         Route::get('permissions','RoleController@getAllPermissions');
+        Route::post('posts/get-slug/','API\PostController@getSlug');
         Route::resource('posts','API\PostController');
         Route::resource('seo','API\SeoController');
         Route::resource('ads-banner','API\AdsBannerController');

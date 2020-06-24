@@ -258,6 +258,29 @@ html.os-html,html.os-html>.os-host{display:block;overflow:hidden;box-sizing:bord
   color: #f00;
 }
 
+.main-sidebar,
+.main-sidebar::before {
+  width: 200px;
+}
+
+.layout-fixed .brand-link {
+  width: 200px;
+  text-align: center;
+}
+
+.mx-datepicker {
+  width: 100% !important;
+}
+
+@media (min-width: 768px) {
+  body:not(.sidebar-mini-md) .content-wrapper,
+  body:not(.sidebar-mini-md) .main-footer,
+  body:not(.sidebar-mini-md) .main-header {
+    transition: margin-left 0.3s ease-in-out;
+    margin-left: 200px;
+  }
+}
+
 /*!
  * Bootstrap v4.4.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors

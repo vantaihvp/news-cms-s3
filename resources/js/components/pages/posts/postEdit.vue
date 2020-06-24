@@ -33,6 +33,48 @@
                   />
                 </div>
               </div>
+              <div class="col-12 mb-3">
+                <div class="block-slug">
+                  <strong>Đường dẫn tĩnh:</strong>
+                  <span id="sample-permalink">
+                    <a href="#">
+                      https://billboardvn.vn/
+                      <span id="editable-post-name">
+                        <span class="slug" v-if="!this.edit_slug">{{post.slug}}</span>
+                        <input
+                          type="text"
+                          id="new-post-slug"
+                          :value="post.slug"
+                          autocomplete="off"
+                          v-if="this.edit_slug"
+                        />
+                      </span>
+                      /
+                    </a>
+                  </span>
+                  <span id="edit-slug-buttons">
+                    <button
+                      type="button"
+                      class="edit-slug button btn-outline-primary btn btn-sm"
+                      aria-label="Chỉnh sửa permalink"
+                      @click="editSlug"
+                      v-if="!this.edit_slug"
+                    >Chỉnh sửa</button>
+                    <button
+                      v-if="this.edit_slug"
+                      type="button"
+                      class="save button button-small btn btn-outline-success btn-sm"
+                      @click="updateSlug"
+                    >Ok</button>
+                    <button
+                      v-if="this.edit_slug"
+                      type="button"
+                      class="cancel btn-outline-dark btn btn-sm"
+                      @click="cancelSlug"
+                    >Hủy</button>
+                  </span>
+                </div>
+              </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                   <label>Tóm tắt</label>
@@ -200,8 +242,8 @@
           </div>
           <div class="card-body">
             <div class="form-group row">
-              <label for class="col-sm-4 col-form-label">Trạng thái:</label>
-              <div class="col-sm-8">
+              <label for class="col-xl-12 col-form-label">Trạng thái:</label>
+              <div class="col-sm-12">
                 <select
                   class="form-control"
                   name="post_status"
@@ -216,14 +258,14 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for class="col-sm-4 col-form-label">Đăng lúc:</label>
-              <div class="col-sm-8">
+              <label for class="col-sm-12 col-form-label">Đăng lúc:</label>
+              <div class="col-sm-12">
                 <date-picker type="datetime" v-model="post.date" :format="momentFormat"></date-picker>
               </div>
             </div>
             <div class="form-group row">
-              <label for class="col-sm-4 col-form-label">Chuyển cho:</label>
-              <div class="col-sm-8">
+              <label for class="col-sm-12 col-form-label">Chuyển cho:</label>
+              <div class="col-sm-12">
                 <select class="form-control" name="role_id" id="role_post" v-model="post.role_id">
                   <option value="0">Không chuyển</option>
                   <option
@@ -457,6 +499,8 @@
 import SearchEngineOptimize from "./../widgets/SearchEngineOptimize";
 var moment = require("moment");
 import MediaContent from "../widgets/MediaContent";
+import tinymce from "vue-tinymce-editor";
+import "../../../plugins/tinymce/embed_button";
 export default {
   components: {
     SearchEngineOptimize,
@@ -517,8 +561,16 @@ export default {
       tinymceOptions: {
         convert_urls: true,
         relative_urls: false,
-        remove_script_host: false
-      }
+        remove_script_host: false,
+        toolbar2: "embed_button",
+        plugins: [
+          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+          "searchreplace wordcount visualblocks visualchars code fullscreen",
+          "insertdatetime media nonbreaking save table contextmenu directionality",
+          "template paste textcolor colorpicker textpattern imagetools toc help emoticons hr codesample embed_button autoresize"
+        ]
+      },
+      edit_slug: false
     };
   },
   methods: {
@@ -530,7 +582,7 @@ export default {
       }
     },
     insertMedia(photo) {
-      let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}"/>`;
+      let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}" style="max-width:100%"/>`;
       let caption = `<p class="wp-caption-text">${photo.caption}</p>`;
       this.$refs.tm.editor.insertContent(tagImg + caption);
     },
@@ -666,6 +718,27 @@ export default {
             this.$toastr.error(list_error, "Lỗi");
           });
       });
+    },
+    editSlug() {
+      this.edit_slug = !this.edit_slug;
+    },
+    cancelSlug() {
+      document.getElementById("new-post-slug").value = this.post.slug;
+      this.edit_slug = !this.edit_slug;
+    },
+    updateSlug() {
+      let dataForm = {};
+      dataForm.slug = document.getElementById("new-post-slug").value;
+      dataForm.id = this.post.id;
+      axios
+        .post("auth/posts/get-slug/", dataForm)
+        .then(rs => {
+          this.post.slug = rs.data;
+          this.edit_slug = !this.edit_slug;
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   },
   created() {

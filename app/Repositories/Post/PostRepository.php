@@ -118,7 +118,19 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
             }else{
                 $post->thumbnail_url = url('/images/admin/placeholder.png');
             }
+            if($post->thumbnail_highlight){
+                $post->highlight_url = url('/').'/images'.Photos::find($post->thumbnail_id)->url;
+            }
         }
         return $rs;
     }
+    public function issetSlug($slug,$id){
+        $post = $this->_model->where('slug',$slug);
+        if($id){
+            $post->where('id','<>',$id);
+        }
+        $result = $post->count();
+        return $result;
+    }
+    
 }

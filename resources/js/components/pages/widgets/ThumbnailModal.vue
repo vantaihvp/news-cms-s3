@@ -36,15 +36,10 @@
                             <input
                               type="file"
                               class="form-control custom-file-input"
-                              v-on:change="
-                                                                onImageChange
-                                                            "
+                              v-on:change="onImageChange"
                             />
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <label class="custom-file-label" for="customFile">Chọn tập tin</label>
                           </div>
-                        </div>
-                        <div class="col-auto">
-                          <button class="btn btn-success">Upload</button>
                         </div>
                       </div>
                     </form>
@@ -224,6 +219,7 @@ export default {
     },
     onImageChange(e) {
       this.image = e.target.files[0];
+      this.uploadThumbnailModal(e);
     },
     getData(page) {
       let paramsData = {};

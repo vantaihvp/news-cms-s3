@@ -40,7 +40,7 @@
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="form-group">
+                <div class="form-group group-content" v-scroll="handleScroll">
                   <label>Nội dung</label>
                   <MediaContent ref="mediacontent" @insertMedia="insertMedia($event)" />
                   <tinymce
@@ -198,8 +198,8 @@
           </div>
           <div class="card-body">
             <div class="form-group row">
-              <label for class="col-sm-4 col-form-label">Trạng thái:</label>
-              <div class="col-sm-8">
+              <label for class="col-sm-12 col-form-label">Trạng thái:</label>
+              <div class="col-sm-12">
                 <select
                   class="form-control"
                   name="post_status"
@@ -214,14 +214,14 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for class="col-sm-4 col-form-label">Đăng lúc:</label>
-              <div class="col-sm-8">
+              <label for class="col-sm-12 col-form-label">Đăng lúc:</label>
+              <div class="col-sm-12">
                 <date-picker type="datetime" v-model="post.date" :format="momentFormat"></date-picker>
               </div>
             </div>
             <div class="form-group row">
-              <label for class="col-sm-4 col-form-label">Chuyển đến:</label>
-              <div class="col-sm-8">
+              <label for class="col-sm-12 col-form-label">Chuyển đến:</label>
+              <div class="col-sm-12">
                 <select class="form-control" name="role_id" id="role_post" v-model="post.role_id">
                   <option value="0">Không chuyển</option>
                   <option
@@ -452,14 +452,26 @@
 
 <script>
 import SearchEngineOptimize from "./../widgets/SearchEngineOptimize";
-// import tinymce from "vue-tinymce-editor";
-// import "../../../plugins/tinymce/vantai";
+import tinymce from "vue-tinymce-editor";
+import "../../../plugins/tinymce/embed_button";
 var moment = require("moment");
 import MediaContent from "../widgets/MediaContent";
 export default {
   components: {
     SearchEngineOptimize,
     MediaContent
+  },
+  directive: {
+    scroll: {
+      inserted: function(el, binding) {
+        let f = function(evt) {
+          if (binding.value(evt, el)) {
+            window.removeEventListener("scroll", f);
+          }
+        };
+        window.addEventListener("scroll", f);
+      }
+    }
   },
   data() {
     return {
@@ -511,7 +523,14 @@ export default {
       tinymceOptions: {
         convert_urls: true,
         relative_urls: false,
-        remove_script_host: false
+        remove_script_host: false,
+        toolbar2: "embed_button",
+        plugins: [
+          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+          "searchreplace wordcount visualblocks visualchars code fullscreen",
+          "insertdatetime media nonbreaking save table contextmenu directionality",
+          "template paste textcolor colorpicker textpattern imagetools toc help emoticons hr codesample embed_button autoresize"
+        ]
       }
     };
   },
@@ -525,7 +544,7 @@ export default {
       }
     },
     insertMedia(photo) {
-      let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}"/>`;
+      let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}" style="max-width:100%"/>`;
       let caption = `<p class="wp-caption-text">${photo.caption}</p>`;
       this.$refs.tm.editor.insertContent(tagImg + caption);
     },
@@ -617,6 +636,16 @@ export default {
             this.$toastr.error(list_error, "Lỗi");
           });
       });
+    },
+    handleScroll: function(evt, el) {
+      console.log(el.offsetTop);
+      // if (window.scrollY > 50) {
+      //   console.log(window.scrollY);
+      //   el.style.position = "fixed";
+      //   el.style.top = "0px";
+      // } else {
+      //   el.style.position = "relative";
+      // }
     }
   },
   created() {

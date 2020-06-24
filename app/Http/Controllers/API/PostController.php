@@ -7,14 +7,17 @@ use Illuminate\Http\Request;
 use App\Repositories\Post\PostRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Post\Category\CategoryRepositoryInterface;
+use App\Repositories\Photo\PhotoRepositoryInterface;
 class PostController extends Controller
 {
     protected $postRepository;
     protected $categoryRepository;
-    public function __construct(PostRepositoryInterface $postRepository,CategoryRepositoryInterface $categoryRepository)
+    protected $photoRepository;
+    public function __construct(PostRepositoryInterface $postRepository,CategoryRepositoryInterface $categoryRepository,PhotoRepositoryInterface $photoRepository)
     {
         $this->postRepository = $postRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->photoRepository = $photoRepository;
     }
     /**
      * Display a listing of the resource.
@@ -59,6 +62,9 @@ class PostController extends Controller
         }else{
             $data['slug'] = $this->slugify($request->get('title'));
         }
+        $request['slug'] = $data['slug'];
+        // return $request;
+        $data['slug'] = $this->getSlug($request);
         if(!$request->thumbnail_id){
             $data['thumbnail_id'] = 1;
         }
@@ -94,6 +100,12 @@ class PostController extends Controller
     {
         $data = $this->postRepository->find($id);
         if($data){
+            if($data->thumbnail_id){
+                $data['thumbnail_url'] = url('/').'/images'.$this->photoRepository->find($data->thumbnail_id)->url;
+            }
+            if($data->thumbnail_highlight){
+                $data['highlight_url'] = url('/').'/images'.$this->photoRepository->find($data->thumbnail_highlight)->url;
+            }
             return response()->json(['success'=>$data]);
         }
         return response()->json(['errors'=> ['Not found']]);
@@ -137,6 +149,9 @@ class PostController extends Controller
         }elseif($request->filled('title')){
             $attributes['slug'] = $this->slugify($request->get('title'));
         }
+        $request['slug'] = $attributes['slug'];
+        $request['id'] = $id;
+        $attributes['slug'] = $this->getSlug($request);
         if($request->filled('selectedTags')){
             $arrTags = array();
             foreach ($request->selectedTags as $key => $item) {
@@ -179,5 +194,16 @@ class PostController extends Controller
             return response()->json(['success'=>true]);
         }
         return response()->json(['error'=>$id]);
+    }
+    public function getSlug(Request $request){
+        $slug = $request->get('slug');
+        $id = $request->get('id');
+        $flag = 2;
+        $slug_default = $slug;
+        while ($this->postRepository->issetSlug($slug,$id)) {
+            $slug = $slug_default.'-'.$flag;
+            $flag++;
+        }
+        return $slug;
     }
 }

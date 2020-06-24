@@ -37,11 +37,8 @@
                     v-on:change="onImageChange"
                     style="position: absolute;top: 0;"
                   />
-                  <label class="custom-file-label" for="customFile">Choose file</label>
+                  <label class="custom-file-label" for="customFile">Chọn tập tin</label>
                 </div>
-              </div>
-              <div class="col-auto">
-                <button class="btn btn-success">Submit</button>
               </div>
             </div>
           </form>
@@ -200,6 +197,7 @@ export default {
     onImageChange(e) {
       console.log(e.target.files[0]);
       this.image = e.target.files[0];
+      this.uploadPhoto(e);
     },
     getData(page) {
       let paramsData = {};

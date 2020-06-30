@@ -46,9 +46,7 @@
                     <ul class="photos">
                       <li v-for="photo in photos.data" :key="photo.id">
                         <img
-                          :src="
-                                                        '/images/' + photo.url
-                                                    "
+                          :src="photo.url"
                           v-on:click="detailThumbnail"
                           :data-id="photo.id"
                           v-bind:class="{
@@ -73,10 +71,7 @@
                       v-if="thumbnailSelected.url == ''"
                     />
                     <img
-                      :src="
-                                                '/images/' +
-                                                    thumbnailSelected.url
-                                            "
+                      :src="thumbnailSelected.url"
                       class="img-fluid img-thumbnail"
                       v-if="thumbnailSelected.url"
                     />
@@ -208,6 +203,15 @@ export default {
         .then(response => {
           currentObj.success = response.data.success;
           this.photos.data.unshift(response.data.success);
+          this.thumbnailSelected.id = response.data.success.id;
+          axios.get("auth/photos/" + this.thumbnailSelected.id).then(data => {
+            let thumbnail = data.data.success;
+            this.thumbnailSelected.name = thumbnail.name;
+            this.thumbnailSelected.title = thumbnail.title;
+            this.thumbnailSelected.caption = thumbnail.caption;
+            this.thumbnailSelected.description = thumbnail.description;
+            this.thumbnailSelected.url = thumbnail.url;
+          });
         })
         .catch(function(error) {
           currentObj.output = error;

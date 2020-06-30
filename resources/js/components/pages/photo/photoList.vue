@@ -49,11 +49,7 @@
       <div class="card-body">
         <ul class="list-photos">
           <li v-for="photo in photos.data" :key="photo.id">
-            <img
-              :src="'/images/'+photo.url"
-              class="img-fluid"
-              v-on:click="detailThumbnail(photo.id)"
-            />
+            <img :src="photo.url" class="img-fluid" v-on:click="detailThumbnail(photo.id)" />
           </li>
         </ul>
       </div>
@@ -224,7 +220,7 @@ export default {
         this.thumbnailSelected.alt = thumbnail.alt;
         this.thumbnailSelected.caption = thumbnail.caption;
         this.thumbnailSelected.description = thumbnail.description;
-        this.thumbnailSelected.url = urlWeb + "/images" + thumbnail.url;
+        this.thumbnailSelected.url = thumbnail.url;
       });
     },
     updateDataPhoto() {

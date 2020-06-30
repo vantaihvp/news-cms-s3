@@ -378,7 +378,7 @@
                 v-if="thumbnailHighlight.url == ''"
               />
               <img
-                :src="'/images/' + thumbnailHighlight.url"
+                :src="thumbnailHighlight.url"
                 class="img-fluid img-thumbnail"
                 v-if="thumbnailHighlight.url"
               />
@@ -408,11 +408,7 @@
               class="img-fluid img-thumbnail"
               v-if="thumbnail.url == ''"
             />
-            <img
-              :src="'/images/' + thumbnail.url"
-              class="img-fluid img-thumbnail"
-              v-if="thumbnail.url"
-            />
+            <img :src="thumbnail.url" class="img-fluid img-thumbnail" v-if="thumbnail.url" />
             <ThumbnailModal
               v-model="post.thumbnail_id"
               id="thumbnail"
@@ -545,7 +541,10 @@ export default {
     },
     insertMedia(photo) {
       let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}" style="max-width:100%"/>`;
-      let caption = `<p class="wp-caption-text">${photo.caption}</p>`;
+      let caption = "";
+      if (photo.caption != null) {
+        caption = `<p class="wp-caption-text">${photo.caption}</p>`;
+      }
       this.$refs.tm.editor.insertContent(tagImg + caption);
     },
     getRoles() {

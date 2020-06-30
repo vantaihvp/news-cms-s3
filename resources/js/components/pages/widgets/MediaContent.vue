@@ -54,9 +54,7 @@
                     <ul class="photos">
                       <li v-for="photo in photos.data" :key="photo.id">
                         <img
-                          :src="
-                                                        '/images/' + photo.url
-                                                    "
+                          :src="photo.url"
                           v-on:click="detailThumbnail"
                           :data-id="photo.id"
                           v-bind:class="{
@@ -93,9 +91,7 @@
                         name="title"
                         class="form-control"
                         placeholder="Title"
-                        v-model="
-                                                    thumbnailSelected.title
-                                                "
+                        v-model="thumbnailSelected.title"
                       />
                     </div>
                     <div class="form-group">
@@ -115,9 +111,7 @@
                         name="caption"
                         class="form-control"
                         placeholder="Caption"
-                        v-model="
-                                                    thumbnailSelected.caption
-                                                "
+                        v-model="thumbnailSelected.caption"
                       />
                     </div>
                     <div class="form-group">
@@ -127,9 +121,7 @@
                         name="description"
                         rows="3"
                         placeholder="Description"
-                        v-model="
-                                                    thumbnailSelected.description
-                                                "
+                        v-model="thumbnailSelected.description"
                       ></textarea>
                     </div>
                     <div class="form-group">
@@ -147,17 +139,11 @@
                         <button
                           class="btn btn-danger"
                           @click="deletePhoto"
-                          v-if="
-                                                        this.thumbnailSelected
-                                                            .id
-                                                    "
+                          v-if="this.thumbnailSelected.id"
                         >Xóa vĩnh viễn</button>
                         <button
                           class="btn btn-success"
-                          v-if="
-                                                        this.thumbnailSelected
-                                                            .id
-                                                    "
+                          v-if="this.thumbnailSelected.id"
                           @click="updateDataPhoto"
                         >Cập nhật</button>
                       </div>
@@ -224,8 +210,17 @@ export default {
         .post("/auth/photos", formData, config)
         .then(response => {
           currentObj.success = response.data.success;
-          console.log(response);
           this.photos.data.unshift(response.data.success);
+          this.thumbnailSelected.id = response.data.success.id;
+          axios.get("auth/photos/" + this.thumbnailSelected.id).then(data => {
+            let thumbnail = data.data.success;
+            this.thumbnailSelected.name = thumbnail.name;
+            this.thumbnailSelected.title = thumbnail.title;
+            this.thumbnailSelected.alt = thumbnail.alt;
+            this.thumbnailSelected.caption = thumbnail.caption;
+            this.thumbnailSelected.description = thumbnail.description;
+            this.thumbnailSelected.url = thumbnail.url;
+          });
         })
         .catch(function(error) {
           currentObj.output = error;
@@ -258,7 +253,7 @@ export default {
         this.thumbnailSelected.alt = thumbnail.alt;
         this.thumbnailSelected.caption = thumbnail.caption;
         this.thumbnailSelected.description = thumbnail.description;
-        this.thumbnailSelected.url = urlWeb + "/images" + thumbnail.url;
+        this.thumbnailSelected.url = thumbnail.url;
       });
     },
     setThumbnail() {

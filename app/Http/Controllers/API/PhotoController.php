@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Photo\PhotoRepositoryInterface;
+
+use Illuminate\Support\Facades\Storage;
 class PhotoController extends Controller
 {
     protected $photoRepository;
@@ -19,7 +21,11 @@ class PhotoController extends Controller
      */
     public function index(Request $request)
     {
+        
         $rs = $this->photoRepository->getWithPaginate($request);
+        foreach ($rs as $key => $value) {
+            $value['url'] = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'. $value->url;
+        }
         return response()->json(['success'=>$rs]);
     }
 
@@ -41,14 +47,20 @@ class PhotoController extends Controller
      */
     public function store(Request $request)
     {
-        $imageName = time().'.'.$request->image->getClientOriginalExtension();
-        $request->image->move(public_path('images/frontend/post'), $imageName);
+        $this->validate($request, [
+           'image' => 'required|image|max:2048'
+        ]);
+        $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7');
+        $path = $request->file('image')->store('images/'.$dt->year.'/'.$dt->month,'s3');
+        Storage::disk('s3')->setVisibility($path, 'public');
+        $path_arr = explode('/',$path);
         $data = $request->all();
-        $data['name'] = $imageName;
-        $data['url'] = '/frontend/post/'.$imageName;
+        $data['name'] = $path_arr[(count($path_arr)-1)];
+        $data['url'] =  $path;
         $data['user_id'] = \Auth::user()->id;
         $rs = $this->photoRepository->create($data);
         if($rs){
+            $rs['url'] = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'. $rs->url;
             return response()->json(['success'=>$rs]);
         }
         return response()->json(['errors'=> ['Tạo không thành công']]);
@@ -64,6 +76,7 @@ class PhotoController extends Controller
     {
         $data = $this->photoRepository->find($id);
         if($data){
+            $data['url'] = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'. $data['url'];
             return response()->json(['success'=>$data]);
         }
         return response()->json(['errors'=> ['Not found']]);
@@ -109,8 +122,8 @@ class PhotoController extends Controller
             return response()->json(['error'=>'Không thể xóa hình này'],400);
         }
         $data = $this->photoRepository->find($id);
-        // return public_path('images').$data->url;
-        if(unlink(public_path('images').$data->url)){
+
+        if(Storage::disk('s3')->delete($data->url)){
             $rs = $this->photoRepository->delete($id);
             if($rs){
                 return response()->json(['success'=>true]);

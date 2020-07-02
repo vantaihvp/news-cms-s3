@@ -72,7 +72,7 @@ class PhotoController extends Controller
             $data['name'] = 'no_name';
         }
         $data['user_id'] = \Auth::user()->id;
-        $data['url'] = str_replace("https://billboardvn.vn/wp-content/uploads/","https://news-cms.s3-ap-southeast-1.amazonaws.com/images/",$request->url);
+        $data['url'] = str_replace("https://billboardvn.vn/wp-content/uploads/","images/",$request->url);
         $rs = $this->photoRepository->create($data);
         if($rs){
             return response()->json(['success'=>$rs]);

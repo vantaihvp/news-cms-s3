@@ -45,22 +45,36 @@ class PhotoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-           'image' => 'required|image|max:2048'
-        ]);
-        $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7');
-        $path = $request->file('image')->store('images/'.$dt->year.'/'.$dt->month,'s3');
-        Storage::disk('s3')->setVisibility($path, 'public');
-        $path_arr = explode('/',$path);
+    // public function store(Request $request)
+    // {
+    //     $this->validate($request, [
+    //        'image' => 'required|image|max:2048'
+    //     ]);
+    //     $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7');
+    //     $path = $request->file('image')->store('images/'.$dt->year.'/'.$dt->month,'s3');
+    //     Storage::disk('s3')->setVisibility($path, 'public');
+    //     $path_arr = explode('/',$path);
+    //     $data = $request->all();
+    //     $data['name'] = $path_arr[(count($path_arr)-1)];
+    //     $data['url'] =  $path;
+    //     $data['user_id'] = \Auth::user()->id;
+    //     $rs = $this->photoRepository->create($data);
+    //     if($rs){
+    //         $rs['url'] = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'. $rs->url;
+    //         return response()->json(['success'=>$rs]);
+    //     }
+    //     return response()->json(['errors'=> ['Tạo không thành công']]);
+    // }
+
+    public function store(Request $request){
         $data = $request->all();
-        $data['name'] = $path_arr[(count($path_arr)-1)];
-        $data['url'] =  $path;
+        if($request->name==''){
+            $data['name'] = 'no_name';
+        }
         $data['user_id'] = \Auth::user()->id;
+        $data['url'] = str_replace("https://billboardvn.vn/wp-content/uploads/","https://news-cms.s3-ap-southeast-1.amazonaws.com/images/",$request->url);
         $rs = $this->photoRepository->create($data);
         if($rs){
-            $rs['url'] = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'. $rs->url;
             return response()->json(['success'=>$rs]);
         }
         return response()->json(['errors'=> ['Tạo không thành công']]);

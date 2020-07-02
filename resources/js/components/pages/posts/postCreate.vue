@@ -209,6 +209,8 @@
                   <option value="draft">Bản nháp</option>
                   <option value="pending">Chờ duyệt</option>
                   <option value="private">Riêng tư</option>
+                  <option value="approved">Đã duyệt</option>
+                  <option value="return">Trả bài</option>
                   <option value="publish" v-if="this.$can('publish-post')">Xuất bản</option>
                 </select>
               </div>

@@ -18,11 +18,13 @@ import CategoryDashboard from "./components/pages/category/CategoryDashboard";
 import CategoryList from "./components/pages/category/CategoryList";
 import CategoryEdit from "./components/pages/category/CategoryEdit";
 import CategoryCreate from "./components/pages/category/CategoryCreate";
+import categoriesImport from "./components/pages/category/categoriesImport";
 //Tags
 import tagDashboard from "./components/pages/tag/tagDashboard";
 import tagList from "./components/pages/tag/tagList";
 import tagEdit from "./components/pages/tag/tagEdit";
 import tagCreate from "./components/pages/tag/tagCreate";
+import tagImport from "./components/pages/tag/tagImport";
 //posts
 import postDashboard from "./components/pages/posts/postDashboard";
 import postList from "./components/pages/posts/postList";
@@ -31,6 +33,7 @@ import postCreate from "./components/pages/posts/postCreate";
 //Photos
 import photoDashboard from "./components/pages/photo/photoDashboard";
 import photoList from "./components/pages/photo/photoList";
+import photosImport from "./components/pages/photo/photosImport";
 //Ads banner
 import adsBannerDashboard from "./components/pages/ads/adsBanner/adsBannerDashboard";
 import adsBannerList from "./components/pages/ads/adsBanner/adsBannerList";
@@ -95,6 +98,11 @@ const routes = [{
                         name: "category-edit",
                         component: CategoryEdit,
                         props: true
+                    },
+                    {
+                        path: "import",
+                        name: "categories-import",
+                        component: categoriesImport,
                     }
                 ]
             },
@@ -117,6 +125,11 @@ const routes = [{
                         name: "tag-edit",
                         component: tagEdit,
                         props: true
+                    },
+                    {
+                        path: "import",
+                        name: "tag-import",
+                        component: tagImport,
                     }
                 ]
             },
@@ -147,10 +160,16 @@ const routes = [{
                 name: "photo.dashboard",
                 component: photoDashboard,
                 children: [{
-                    path: "",
-                    name: "photo.list",
-                    component: photoList
-                }, ]
+                        path: "",
+                        name: "photo.list",
+                        component: photoList
+                    },
+                    {
+                        path: "import",
+                        name: "photo.import",
+                        component: photosImport
+                    }
+                ]
             },
             {
                 path: "ads-banner",

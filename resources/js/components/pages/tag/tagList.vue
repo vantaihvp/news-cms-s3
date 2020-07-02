@@ -77,7 +77,7 @@
               </tr>
             </tbody>
           </table>
-          <pagination :data="tags" @pagination-change-page="getResults"></pagination>
+          <pagination :data="tags" @pagination-change-page="getResults" :limit="4"></pagination>
         </div>
       </div>
     </div>

@@ -5,14 +5,17 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Post\Category\CategoryRepositoryInterface;
+use App\Repositories\Seo\SeoRepositoryInterface;
 class CategoryController extends Controller
 {
     // protected $categoryRepository;
     protected $categoryRepository;
     protected $categories_array = array();
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    protected $seoRepository;
+    public function __construct(CategoryRepositoryInterface $categoryRepository,SeoRepositoryInterface $seoRepository)
     {
         $this->categoryRepository = $categoryRepository;
+        $this->seoRepository = $seoRepository;
     }
     /**
      * Display a listing of the resource.
@@ -65,7 +68,9 @@ class CategoryController extends Controller
             'title' => 'required'
         ]);
         $data = $request->all();
+        $seo = $this->seoRepository->create($data);
         $data['user_id'] = \Auth::user()->id;
+        $data['seo_id'] = $seo->id;
         if($request->filled('slug')){
             $data['slug'] = $this->slugify($request->get('slug'));
         }else{

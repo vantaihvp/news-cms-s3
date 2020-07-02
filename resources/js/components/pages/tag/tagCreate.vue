@@ -81,7 +81,6 @@ export default {
         description: this.description,
         taxonomy: "tag"
       };
-      console.log(dataForm);
       axios
         .post("auth/categories", dataForm)
         .then(rs => {

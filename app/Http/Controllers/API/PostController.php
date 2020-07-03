@@ -8,16 +8,19 @@ use App\Repositories\Post\PostRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Post\Category\CategoryRepositoryInterface;
 use App\Repositories\Photo\PhotoRepositoryInterface;
+use App\Repositories\Seo\SeoRepositoryInterface;
 class PostController extends Controller
 {
     protected $postRepository;
     protected $categoryRepository;
     protected $photoRepository;
-    public function __construct(PostRepositoryInterface $postRepository,CategoryRepositoryInterface $categoryRepository,PhotoRepositoryInterface $photoRepository)
+    protected $seoRepository;
+    public function __construct(PostRepositoryInterface $postRepository,CategoryRepositoryInterface $categoryRepository,PhotoRepositoryInterface $photoRepository,SeoRepositoryInterface $seoRepository)
     {
         $this->postRepository = $postRepository;
         $this->categoryRepository = $categoryRepository;
         $this->photoRepository = $photoRepository;
+        $this->seoRepository = $seoRepository;
     }
     /**
      * Display a listing of the resource.
@@ -83,6 +86,28 @@ class PostController extends Controller
             }
         }
         $data['tags_id'] = json_encode($arrTags);
+        $rs = $this->postRepository->create($data);
+        if($rs){
+            return response()->json(['success'=>$rs]);
+        }
+        return response()->json(['errors'=> ['Tạo không thành công']],400);
+    }
+
+    public function store_api(Request $request){
+        $data = $request->all();
+        $data['title'] = html_entity_decode($request->title);
+        $data['excerpt'] = html_entity_decode($request->excerpt);
+        $data_seo = $request->all();
+        $data_seo['title'] = html_entity_decode($request->title);
+        $data_seo['description'] = html_entity_decode($request->excerpt);
+        $seo = $this->seoRepository->create($data_seo);
+        if($request->format=='standard'){
+            $data['format'] = 'default';
+        }
+        $data['tags_id'] = json_encode($request->get('tags_id'));
+        $data['categories_id'] = json_encode($request->get('categories_id'));
+        $data['seo_id'] = $seo->id;
+        $data['role_id'] = 23;
         $rs = $this->postRepository->create($data);
         if($rs){
             return response()->json(['success'=>$rs]);

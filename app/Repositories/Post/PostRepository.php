@@ -114,12 +114,20 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
                 $post->categories_name = join(",", $categories_arr);
             }
             if($post->thumbnail_id){
-                $post->thumbnail_url = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'.Photos::find($post->thumbnail_id)->url;
+                try {
+                    $post->thumbnail_url = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'.Photos::find($post->thumbnail_id)->url;                    //code...
+                } catch (\Throwable $th) {
+                    $post->thumbnail_url = url('/images/admin/placeholder.png');
+                }
             }else{
                 $post->thumbnail_url = url('/images/admin/placeholder.png');
             }
             if($post->thumbnail_highlight){
-                $post->highlight_url = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'.Photos::find($post->thumbnail_highlight)->url;
+                try {
+                    $post->highlight_url = 'https://'.env('AWS_BUCKET').'.s3-'.env('AWS_DEFAULT_REGION').'.'.'amazonaws.com/'.Photos::find($post->thumbnail_highlight)->url;
+                } catch (\Throwable $th) {
+                    $post->highlight_url = url('/images/admin/placeholder.png');
+                }
             }
         }
         return $rs;

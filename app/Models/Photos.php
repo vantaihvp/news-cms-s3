@@ -9,6 +9,7 @@ class Photos extends Model
     use SoftDeletes;
     protected $table = "photos";
     protected $fillable = [
+        'id',
         'name',
         'alt',
         'title',

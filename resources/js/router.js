@@ -30,6 +30,7 @@ import postDashboard from "./components/pages/posts/postDashboard";
 import postList from "./components/pages/posts/postList";
 import postEdit from "./components/pages/posts/postEdit";
 import postCreate from "./components/pages/posts/postCreate";
+import postsImport from "./components/pages/posts/postsImport";
 //Photos
 import photoDashboard from "./components/pages/photo/photoDashboard";
 import photoList from "./components/pages/photo/photoList";
@@ -152,6 +153,11 @@ const routes = [{
                         name: "post-edit",
                         component: postEdit,
                         props: true
+                    },
+                    {
+                        path: "import",
+                        name: "post.import",
+                        component: postsImport
                     }
                 ]
             },

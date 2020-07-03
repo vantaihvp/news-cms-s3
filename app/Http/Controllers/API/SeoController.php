@@ -42,7 +42,11 @@ class SeoController extends Controller
      */
     public function store(Request $request)
     {
-        $rs = $this->seoRepository->create($request->all());
+        $data = $request->all();
+        if($request->excerpt!=''){
+            $data['description'] = $request->excerpt;
+        }
+        $rs = $this->seoRepository->create($data);
         if($rs){
             return response()->json(['success'=>$rs]);
         }

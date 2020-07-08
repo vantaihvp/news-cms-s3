@@ -62,7 +62,7 @@
                         />
                       </li>
                     </ul>
-                    <pagination :data="photos" @pagination-change-page="getData"></pagination>
+                    <pagination :data="photos" @pagination-change-page="getData" :limit="4"></pagination>
                   </div>
                 </div>
               </div>

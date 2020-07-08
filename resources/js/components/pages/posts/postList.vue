@@ -206,7 +206,7 @@
         </div>
       </div>
       <div class="card-footer">
-        <pagination :data="posts" @pagination-change-page="getData"></pagination>
+        <pagination :data="posts" @pagination-change-page="getData" :limit="4"></pagination>
       </div>
     </div>
   </section>

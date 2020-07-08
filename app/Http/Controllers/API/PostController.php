@@ -130,10 +130,10 @@ class PostController extends Controller
         $data = $this->postRepository->find($id);
         if($data){
             if($data->thumbnail_id){
-                $data['thumbnail_url'] = url('/').'/images'.$this->photoRepository->find($data->thumbnail_id)->url;
+                $data['thumbnail_url'] = $this->photoRepository->find($data->thumbnail_id)->url;
             }
             if($data->thumbnail_highlight){
-                $data['highlight_url'] = url('/').'/images'.$this->photoRepository->find($data->thumbnail_highlight)->url;
+                $data['highlight_url'] = $this->photoRepository->find($data->thumbnail_highlight)->url;
             }
             return response()->json(['success'=>$data]);
         }

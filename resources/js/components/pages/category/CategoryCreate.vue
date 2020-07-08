@@ -55,11 +55,7 @@
                 </div>
               </div>
               <div class="col-md-12">
-                <search-engine-optimize
-                  ref="seoForm"
-                  :obj_description="description"
-                  :obj_title="title"
-                />
+                <search-engine-optimize ref="seoForm" v-model="seoObj" />
               </div>
             </div>
           </div>
@@ -82,6 +78,10 @@ export default {
   },
   data() {
     return {
+      seoObj: {
+        title: "",
+        description: ""
+      },
       title: "",
       slug: "",
       parent_id: 0,
@@ -101,24 +101,21 @@ export default {
         title: this.title,
         slug: this.slug,
         parent_id: this.parent_id,
-        description: this.description
+        description: this.description,
+        seo: this.seoObj
       };
-      let rs_seo = this.$refs.seoForm.createSeo();
-      rs_seo.then(rs => {
-        dataForm.seo_id = rs.id;
-        axios
-          .post("auth/categories", dataForm)
-          .then(rs => {
-            toastr.success("Thành công", "Thêm thành công");
-            this.$router.push({
-              path: "/admin/categories"
-            });
-          })
-          .catch(error => {
-            this.errors = error.response.data.errors;
-            toastr.success("Lỗi", "Thêm không thành công");
+      axios
+        .post("auth/categories", dataForm)
+        .then(rs => {
+          toastr.success("Thành công", "Thêm thành công");
+          this.$router.push({
+            path: "/admin/categories"
           });
-      });
+        })
+        .catch(error => {
+          this.errors = error.response.data.errors;
+          toastr.success("Lỗi", "Thêm không thành công");
+        });
     }
   },
   created() {

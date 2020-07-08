@@ -79,6 +79,9 @@ class CategoryController extends Controller
         if($request->filled('taxonomy')){
             $data['taxonomy'] = $request->get('taxonomy');
         }
+        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
+        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->description;
+        $data['seo_id'] = $this->seoRepository->create($data_seo)->id;
         $rs = $this->categoryRepository->create($data);
         if($rs){
             return response()->json(['success'=>$rs]);
@@ -110,6 +113,7 @@ class CategoryController extends Controller
     {
         $data = $this->categoryRepository->find($id);
         if($data){
+            $data['seoObj'] = $this->seoRepository->find($data->seo_id);
             return response()->json(['success'=>$data]);
         }
     }
@@ -124,6 +128,14 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $attributes = $request->all();
+        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
+        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->description;
+        $seo_id = $this->categoryRepository->find($id)->seo_id;
+        if($seo_id){
+            $this->seoRepository->update($seo_id,$data_seo);
+        }else{
+            $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
+        }
         $data = $this->categoryRepository->update($id,$attributes);
         if($data){
             return response()->json(['success'=>$data]);

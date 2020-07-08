@@ -18,8 +18,9 @@
           name="seo-title"
           class="form-control"
           placeholder="SEO Title"
-          aria-describedby="helpId"
-          v-model="title"
+          ref="inputTitle"
+          :value="value.title"
+          @input="updateData()"
         />
       </div>
       <div class="form-group">
@@ -30,7 +31,9 @@
           rows="3"
           aria-placeholder="SEO description"
           placeholder="SEO description"
-          v-model="description"
+          ref="inputDescription"
+          :value="value.description"
+          @input="updateData()"
         ></textarea>
       </div>
     </div>
@@ -40,17 +43,7 @@
 <script>
 export default {
   name: "SearchEngineOptimize",
-  props: {
-    id: {
-      type: [String, Number]
-    },
-    obj_title: {
-      type: String
-    },
-    obj_description: {
-      type: String
-    }
-  },
+  props: ["value"],
   data() {
     return {
       title: "",
@@ -58,53 +51,12 @@ export default {
     };
   },
   methods: {
-    getData() {
-      if (this.id) {
-        axios
-          .get("auth/seo/" + this.id)
-          .then(response => {
-            this.title = response.data.success.title;
-            this.description = response.data.success.description;
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      }
-    },
-    updateSeo() {
-      let dataForm = {
-        id: this.id,
-        title: this.title,
-        description: this.description
-      };
-      return axios
-        .put("auth/seo/" + this.id, dataForm)
-        .then(response => {
-          return response.data.success;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    createSeo() {
-      let dataForm = {
-        title: this.title.length ? this.title : this.obj_title,
-        description: this.description.length
-          ? this.description
-          : this.obj_description
-      };
-      return axios
-        .post("/auth/seo", dataForm)
-        .then(rs => {
-          return rs.data.success;
-        })
-        .catch(error => {
-          return error;
-        });
+    updateData() {
+      this.$emit("input", {
+        title: this.$refs.inputTitle.value,
+        description: this.$refs.inputDescription.value
+      });
     }
-  },
-  created() {
-    this.getData();
   }
 };
 </script>

@@ -60,6 +60,9 @@ class PostController extends Controller
         $data['date'] = Carbon::parse($request->date);
         $data['categories_id'] = json_encode($request->categories_id);
         $data['related_posts'] = json_encode($request->related_posts);
+        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
+        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->excerpt;
+        $data['seo_id'] = $this->seoRepository->create($data_seo)->id;
         if($request->filled('slug')){
             $data['slug'] = $this->slugify($request->get('slug'));
         }else{
@@ -97,6 +100,7 @@ class PostController extends Controller
         $data = $request->all();
         $data['title'] = html_entity_decode($request->title);
         $data['excerpt'] = html_entity_decode($request->excerpt);
+        $data['description'] = str_replace('https://billboardvn.vn/wp-content/uploads','https://news-cms.s3-ap-southeast-1.amazonaws.com/images',$request->description);
         $data_seo = $request->all();
         $data_seo['title'] = html_entity_decode($request->title);
         $data_seo['description'] = html_entity_decode($request->excerpt);
@@ -152,6 +156,7 @@ class PostController extends Controller
             ], 200);
         }
         if($data){
+            $data['seoObj'] = $this->seoRepository->find($data->seo_id);
             return response()->json(['success'=>$data]);
         }
         return response()->json(['errors'=> ['Not found']]);
@@ -200,6 +205,14 @@ class PostController extends Controller
         if($request->filled('related_posts')){
             $attributes['related_posts'] = json_encode($request->related_posts);
         }
+        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
+        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->excerpt;
+        $seo_id = $this->postRepository->find($id)->seo_id;
+        if($seo_id){
+            $this->seoRepository->update($seo_id,$data_seo);
+        }else{
+            $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
+        }        
         $data = $this->postRepository->update($id,$attributes);
         if($data){
             return response()->json(['success'=>$data]);

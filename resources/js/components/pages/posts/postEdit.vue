@@ -192,13 +192,7 @@
             </ul>
           </div>
         </div>
-        <search-engine-optimize
-          ref="seoForm"
-          v-if="post.seo_id"
-          :id="post.seo_id"
-          :obj_title="post.title"
-          :obj_description="post.description"
-        />
+        <search-engine-optimize ref="seoForm" v-model="seoObj" />
         <div class="card shadow-none">
           <div class="card-header">
             <div class="float-left">
@@ -253,6 +247,8 @@
                   <option value="draft">Bản nháp</option>
                   <option value="pending">Chờ duyệt</option>
                   <option value="private">Riêng tư</option>
+                  <option value="return">Trả bài</option>
+                  <option value="approved" v-if="this.$can('publish-post')">Đã duyệt</option>
                   <option value="publish" v-if="this.$can('publish-post')">Xuất bản</option>
                 </select>
               </div>
@@ -263,22 +259,9 @@
                 <date-picker type="datetime" v-model="post.date" :format="momentFormat"></date-picker>
               </div>
             </div>
-            <div class="form-group row">
-              <label for class="col-sm-12 col-form-label">Chuyển cho:</label>
-              <div class="col-sm-12">
-                <select class="form-control" name="role_id" id="role_post" v-model="post.role_id">
-                  <option value="0">Không chuyển</option>
-                  <option
-                    v-for="role in roles"
-                    :key="role.id"
-                    v-bind:value="role.id"
-                  >{{ role.name }}</option>
-                </select>
-              </div>
-            </div>
           </div>
           <div class="card-footer text-right">
-            <button class="btn btn-primary" type="button" @click.prevent="submitPost">Đăng bài viết</button>
+            <button class="btn btn-primary" type="button" @click.prevent="submitPost">Cập nhật</button>
           </div>
         </div>
         <div class="card shadow-none card-post-format">
@@ -509,6 +492,10 @@ export default {
   },
   data() {
     return {
+      seoObj: {
+        title: "",
+        description: ""
+      },
       post: {
         title: "",
         slug: "",
@@ -539,7 +526,6 @@ export default {
       selectedTags: [],
       relatedPostsOptions: [],
       selectedRelated: [],
-      roles: {},
       isLoading: false,
       isLoadingRelated: false,
       errors: [],
@@ -593,6 +579,7 @@ export default {
             this.post = response.data.success;
             this.post.date = new Date(response.data.success.date);
             this.selectedCategories = JSON.parse(this.post.categories_id);
+            this.seoObj = response.data.success.seoObj;
             this.getRelatedPosts();
             this.getTagsPost();
           } else {
@@ -643,18 +630,6 @@ export default {
     setPostLayout(e) {
       this.post.layout_name = e.target.dataset.id;
     },
-    getRoles() {
-      axios
-        .get("/auth/roles")
-        .then(response => {
-          if (response.data.status === false) {
-            this.error.message = response.data.message;
-          } else {
-            this.roles = response.data;
-          }
-        })
-        .catch();
-    },
     getTaxonomy() {
       axios.get("auth/categories/get-categories").then(data => {
         this.categories = data.data.success;
@@ -694,29 +669,24 @@ export default {
       dataForm.categories_id = this.selectedCategories;
       dataForm.related_posts = relatedPostArray;
       dataForm.selectedTags = this.selectedTags;
-      // dataForm.tags_id = tagArray;
-      //update or create SEO
-      let rs_seo = this.$refs.seoForm.updateSeo();
-      rs_seo.then(rs => {
-        dataForm.seo_id = rs.id;
-        axios
-          .put("auth/posts/" + this.post.id, dataForm)
-          .then(rs => {
-            let post_id = rs.data.success.id;
-            this.$toastr.success("Thành công", "Chỉnh sửa thành công");
-            this.$router.push({
-              path: "/admin/posts"
-            });
-          })
-          .catch(error => {
-            let list_error = "";
-            Object.values(error.response.data.errors).forEach(
-              e => (list_error += `<li>${e}</li>`)
-            );
-            this.errors = error.response.data.errors;
-            this.$toastr.error(list_error, "Lỗi");
+      dataForm.seo = this.seoObj;
+      axios
+        .put("auth/posts/" + this.post.id, dataForm)
+        .then(rs => {
+          let post_id = rs.data.success.id;
+          this.$toastr.success("Thành công", "Chỉnh sửa thành công");
+          this.$router.push({
+            path: "/admin/posts"
           });
-      });
+        })
+        .catch(error => {
+          let list_error = "";
+          Object.values(error.response.data.errors).forEach(
+            e => (list_error += `<li>${e}</li>`)
+          );
+          this.errors = error.response.data.errors;
+          this.$toastr.error(list_error, "Lỗi");
+        });
     },
     editSlug() {
       this.edit_slug = !this.edit_slug;
@@ -743,7 +713,6 @@ export default {
   created() {
     this.getData();
     this.getTaxonomy();
-    this.getRoles();
   }
 };
 </script>

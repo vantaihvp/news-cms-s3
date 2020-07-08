@@ -55,13 +55,7 @@
                 </div>
               </div>
               <div class="col-md-12">
-                <search-engine-optimize
-                  ref="seoForm"
-                  v-if="seo_id"
-                  :id="seo_id"
-                  :obj_title="title"
-                  :obj_description="description"
-                />
+                <search-engine-optimize ref="seoForm" v-model="seoObj" />
               </div>
             </div>
           </div>
@@ -87,12 +81,15 @@ export default {
   },
   data() {
     return {
+      seoObj: {
+        title: "",
+        description: ""
+      },
       categories: {},
       parent_id: 0,
       title: "",
       description: "",
       slug: "",
-      seo_id: "",
       errors: []
     };
   },
@@ -104,14 +101,14 @@ export default {
     },
     getData() {
       axios
-        .get("/auth/categories/" + this.id)
+        .get("/auth/categories/" + this.id + "/edit")
         .then(response => {
           let data = response.data.success;
           this.title = data.title;
           this.slug = data.slug;
           this.parent_id = data.parent_id;
           this.description = data.description;
-          this.seo_id = data.seo_id;
+          this.seoObj = response.data.success.seoObj;
         })
         .catch(error => {
           console.log(error);
@@ -123,23 +120,20 @@ export default {
         slug: this.slug,
         parent_id: this.parent_id,
         description: this.description,
-        seo_id: this.seo_id
+        seo: this.seoObj
       };
-      let rs_seo = this.$refs.seoForm.updateSeo();
-      rs_seo.then(rs => {
-        axios
-          .put("auth/categories/" + this.id, dataForm)
-          .then(rs => {
-            toastr.success("Thành công", "Cập nhật thành công");
-            this.$router.push({
-              path: "/admin/categories"
-            });
-          })
-          .catch(error => {
-            this.errors = error.response.data.errors;
-            toastr.error("Lỗi", "Cập nhật không thành công");
+      axios
+        .put("auth/categories/" + this.id, dataForm)
+        .then(rs => {
+          toastr.success("Thành công", "Cập nhật thành công");
+          this.$router.push({
+            path: "/admin/categories"
           });
-      });
+        })
+        .catch(error => {
+          this.errors = error.response.data.errors;
+          toastr.error("Lỗi", "Cập nhật không thành công");
+        });
     }
   },
   created() {

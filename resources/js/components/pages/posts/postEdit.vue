@@ -594,20 +594,23 @@ export default {
         });
     },
     getRelatedPosts() {
-      let posts = JSON.parse(this.post.related_posts);
-      posts.forEach(el => {
-        axios.get("/auth/posts/" + el).then(rs => {
-          this.selectedRelated.push({
-            id: rs.data.success.id,
-            title: rs.data.success.title
+      if (this.post.related_posts) {
+        let posts = JSON.parse(this.post.related_posts);
+        posts.forEach(el => {
+          axios.get("/auth/posts/" + el).then(rs => {
+            this.selectedRelated.push({
+              id: rs.data.success.id,
+              title: rs.data.success.title
+            });
           });
         });
-      });
+      }
     },
     getTagsPost() {
       let tags = JSON.parse(this.post.tags_id);
       tags.forEach(el => {
         axios.get("/auth/categories/" + el).then(rs => {
+          console.log(rs);
           this.selectedTags.push({
             id: rs.data.success.id,
             title: rs.data.success.title

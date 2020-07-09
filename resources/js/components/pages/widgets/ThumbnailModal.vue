@@ -277,10 +277,12 @@ export default {
     getThumbnailPost() {
       if (this.value) {
         axios.get("auth/photos/" + this.value).then(data => {
-          let thumbnail = data.data.success;
-          this.thumbnailSelected.url = thumbnail.url;
-          this.thumbnailSelected.id = this.value;
-          this.setThumbnail();
+          if (data.data.success) {
+            let thumbnail = data.data.success;
+            this.thumbnailSelected.url = thumbnail.url;
+            this.thumbnailSelected.id = this.value;
+            this.setThumbnail();
+          }
         });
       }
     },

@@ -157,15 +157,8 @@ export default {
     toggleMenu(e) {
       var menu = e.currentTarget; // Using a class instead, see note below.
       menu.classList.add("menu-open");
-      // var x = e.currentTarget.querySelector("ul");
-      // if (x.style.display === "none") {
-      //   x.style.display = "block";
-      // } else {
-      //   x.style.display = "none";
-      // }
     }
-  },
-  created() {}
+  }
 };
 </script>
 

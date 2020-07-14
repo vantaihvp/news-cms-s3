@@ -112,7 +112,7 @@ class PostController extends Controller
         $data['categories_id'] = json_encode($request->get('categories_id'));
         $data['seo_id'] = $seo->id;
         $data['role_id'] = 23;
-        $rs = $this->postRepository->create($data);
+        $rs = $this->postRepository->updateOrCreate($data);
         if($rs){
             return response()->json(['success'=>$rs]);
         }
@@ -171,17 +171,14 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'title' => 'required'
+        ]);
         $user = \Auth::user();
         $attributes = $request->all();
         $attributes['date'] = Carbon::parse($request->date);
-        if($request->filled('slug')){
-            $attributes['slug'] = $this->slugify($request->get('slug'));
-        }elseif($request->filled('title')){
-            $attributes['slug'] = $this->slugify($request->get('title'));
-        }
-        $request['slug'] = $attributes['slug'];
+        $attributes['slug'] = $this->postRepository->getSlug($this->slugify($request->get('slug')),$id);
         $request['id'] = $id;
-        $attributes['slug'] = $this->getSlug($request);
         if($request->filled('selectedTags')){
             $arrTags = array();
             foreach ($request->selectedTags as $key => $item) {
@@ -233,15 +230,15 @@ class PostController extends Controller
         }
         return response()->json(['error'=>$id]);
     }
-    public function getSlug(Request $request){
-        $slug = $request->get('slug');
-        $id = $request->get('id');
-        $flag = 2;
-        $slug_default = $slug;
-        while ($this->postRepository->issetSlug($slug,$id)) {
-            $slug = $slug_default.'-'.$flag;
-            $flag++;
+    public function getSlug($slug,$id){
+        return $this->postRepository->getSlug($slug,$id);
+    }
+
+    public function setPopular(Request $request){
+        $data = $this->postRepository->update($request->id,['popular' => !$request->popular]);
+        if($data){
+            return response()->json(['success'=>$data]);
         }
-        return $slug;
+        return response()->json(['error'=>$data]);
     }
 }

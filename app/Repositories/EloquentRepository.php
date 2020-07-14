@@ -91,6 +91,10 @@ abstract class EloquentRepository implements RepositoryInterface
         return false;
     }
 
+    public function updateOrCreate($attributes){
+        return $this->_model->updateOrCreate(['id'=>$attributes['id']],$attributes);
+    }
+
     /**
      * Delete
      *
@@ -107,6 +111,16 @@ abstract class EloquentRepository implements RepositoryInterface
         }
 
         return false;
+    }
+
+    public function getSlug($slug,$id){
+        $flag = 2;
+        $slug_default = $slug;
+        while ($this->_model->where('slug',$slug)->where('id','<>',$id)->count()) {
+            $slug = $slug_default.'-'.$flag;
+            $flag++;
+        }
+        return $slug;
     }
 
 }

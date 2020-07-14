@@ -170,12 +170,8 @@
                 <td scope="col">{{post.categories_name}}</td>
                 <td scope="col">{{post.user_name}}</td>
                 <td scope="col" class="text-center popular">
-                  <i
-                    class="fas fa-star"
-                    v-if="post.popular"
-                    @click="setPopular(post.id,post.popular)"
-                  ></i>
-                  <i class="far fa-star" v-else @click="setPopular(post.id,post.popular)"></i>
+                  <i class="fas fa-star" v-if="post.popular" @click="setPopular(post)"></i>
+                  <i class="far fa-star" v-else @click="setPopular(post)"></i>
                 </td>
                 <td scope="col">{{post.status}}</td>
                 <td scope="col">{{post.date}}</td>
@@ -230,6 +226,8 @@ export default {
         { text: "Xuất bản", value: "publish" },
         { text: "Chờ duyệt", value: "pending" },
         { text: "Bản nháp", value: "draft" },
+        { text: "Trả bài", value: "return" },
+        { text: "Đã duyệt", value: "approved" },
         { text: "Riêng tư", value: "private" }
       ],
       post_format: 0,
@@ -385,17 +383,12 @@ export default {
       }
       return false;
     },
-    setPopular(id, popular) {
-      popular = !popular;
-      let dataForm = {
-        popular: popular
-      };
+    setPopular(post) {
       axios
-        .put("auth/posts/" + id, dataForm)
+        .post("auth/posts/set-popular", post)
         .then(rs => {
-          let post_id = rs.data.success.id;
           this.$toastr.success("Thành công", "Chỉnh sửa thành công");
-          this.getData(1);
+          post.popular = !post.popular;
         })
         .catch(error => {
           let list_error = "";

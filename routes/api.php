@@ -35,11 +35,15 @@ Route::prefix('auth')->group(function () {
         Route::get('tags/get-tags', 'API\CategoryController@getTags');
         Route::resource('categories', 'API\CategoryController');
         Route::resource('photos', 'API\PhotoController');
+        Route::post('photos/import','API\PhotoController@store_api');
         Route::resource('users', 'API\UserController');
         Route::resource('roles','RoleController');
         Route::get('permissions','RoleController@getAllPermissions');
+        //Post
         Route::post('posts/get-slug/','API\PostController@getSlug');
         Route::post('posts/import','API\PostController@store_api');
+        Route::post('posts/set-popular','API\PostController@setPopular');
+        //End post
         Route::resource('posts','API\PostController');
         Route::resource('seo','API\SeoController');
         Route::resource('ads-banner','API\AdsBannerController');

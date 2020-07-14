@@ -44,7 +44,7 @@ export default {
                 caption: element.caption.rendered
               };
               axios
-                .post("auth/photos", dataForm)
+                .post("auth/photos/import", dataForm)
                 .then(rs => {
                   console.log(rs);
                   toastr.success("Thành công", "Thêm thành công");

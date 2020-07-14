@@ -34,6 +34,7 @@ export default {
         .then(rs => rs.json())
         .then(data => {
           data.forEach(function(element, index) {
+            // console.log(element.url_video[0]["td_video"]);
             setTimeout(function() {
               let dataForm = {
                 id: element.id,
@@ -46,7 +47,7 @@ export default {
                 thumbnail_id: element.featured_media,
                 date: element.date,
                 description: element.content.rendered,
-                url_video: element.url_video.td_video,
+                url_video: element.url_video[0]["td_video"],
                 categories_id: element.categories,
                 tags_id: element.tags,
                 user_id: 1

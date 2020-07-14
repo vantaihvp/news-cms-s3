@@ -113,6 +113,10 @@ abstract class EloquentRepository implements RepositoryInterface
         return false;
     }
 
+    public function restore($id){
+        return $this->_model->withTrashed()->find($id)->restore();
+    }
+
     public function getSlug($slug,$id){
         $flag = 2;
         $slug_default = $slug;

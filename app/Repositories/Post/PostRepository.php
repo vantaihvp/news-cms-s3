@@ -65,7 +65,7 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
             }
         }
         if($user){
-            if($attributes->filled('status')){
+            if($attributes->filled('status') && $attributes->status!='deleted'){
                 $rs->where('status',$attributes->status);
             }
             if(!$user->can('other-post-list')){
@@ -99,7 +99,11 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
             $exclude = explode(',',$attributes->get('exclude'));
             $rs->whereNotIn('id',$exclude);
         }
-        $rs = $rs->paginate($per_page);
+        if($attributes->filled('status') && $attributes->status=='deleted'){
+            $rs = $rs->onlyTrashed()->paginate($per_page);
+        }else{
+            $rs = $rs->paginate($per_page);
+        }
         foreach ($rs as $key => $post) {
             $post['user_name'] = User::find($post->user_id)->name;
             if($post->categories_id){

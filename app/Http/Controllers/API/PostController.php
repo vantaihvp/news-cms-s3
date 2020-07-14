@@ -30,6 +30,32 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $rs = $this->postRepository->getWithPaginate($request);
+        foreach ($rs as $key => $item) {
+            switch ($item->status) {
+                case 'draft':
+                    $item->status = 'Bản nháp';
+                    break;
+                case 'pending':
+                    $item->status = 'Chờ duyệt';
+                    break;
+                case 'private':
+                    $item->status = 'Riêng tư';
+                    break;
+                case 'return':
+                    $item->status = 'Trả bài';
+                    break;
+                case 'approved':
+                    $item->status = 'Đã duyệt';
+                    break;                
+                case 'publish':
+                    $item->status = 'Đã xuất bản';
+                    break;                
+                default:
+                    $item->status = 'Đã xuất bản';
+                    break;
+            }
+            $item->date = Carbon::parse($item->date)->format('d/m/Y H:i:s');
+        }
         return response()->json(['success'=>$rs]);
     }
 
@@ -230,6 +256,21 @@ class PostController extends Controller
         }
         return response()->json(['error'=>$id]);
     }
+    /**
+     * restore the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return bool
+     */
+    public function restore(Request $request){
+        $id = $request->id;
+        $rs =  $this->postRepository->restore($id);
+        if($rs){
+            return response()->json(['success'=>true]);
+        }
+        return response()->json(['error'=>$id]);
+    }
+
     public function getSlug($slug,$id){
         return $this->postRepository->getSlug($slug,$id);
     }

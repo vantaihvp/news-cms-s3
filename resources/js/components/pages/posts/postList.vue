@@ -158,15 +158,38 @@
                 <th scope="col" class="text-center">Quan tâm</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Date</th>
-                <th scope="col" class="text-center col-action-inner">Hành động</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="post in posts.data" :key="post.id">
                 <td scope="col">
-                  <img :src="post.thumbnail_url" class="img-thumbnail" />
+                  <div class="col-img">
+                    <img :src="post.thumbnail_url" class="img-thumbnail" />
+                  </div>
                 </td>
-                <td scope="col">{{ post.title }}</td>
+                <td scope="col">
+                  {{ post.title }}
+                  <div class="row-actions" v-if="post.deleted_at==null">
+                    <span class="edit">
+                      <router-link
+                        :to="{ name: 'post-edit', params: { id: post.id } }"
+                        v-if="is_edit_post(post)"
+                      >Chỉnh sửa</router-link>
+                    </span>
+                    <span class="delete">
+                      <button
+                        class="btn btn-link text-danger p-0 pl-1"
+                        @click="deletePost(post.id)"
+                        v-if="is_delete_post(post)"
+                      >Xóa</button>
+                    </span>
+                  </div>
+                  <div class="row-actions" v-if="post.deleted_at">
+                    <span class="edit">
+                      <button class="btn btn-link p-0 pl-1" @click="restorePost(post.id)">Khôi phục</button>
+                    </span>
+                  </div>
+                </td>
                 <td scope="col">{{post.categories_name}}</td>
                 <td scope="col">{{post.user_name}}</td>
                 <td scope="col" class="text-center popular">
@@ -175,27 +198,6 @@
                 </td>
                 <td scope="col">{{post.status}}</td>
                 <td scope="col">{{post.date}}</td>
-                <td scope="col" class="text-center">
-                  <div class="col-action-inner">
-                    <router-link
-                      :to="{
-                        name: 'post-edit',
-                        params: { id: post.id }
-                    }"
-                      v-if="is_edit_post(post)"
-                      class="btn btn-warning"
-                    >
-                      <i class="far fa-pencil"></i>
-                    </router-link>
-                    <button
-                      class="btn btn-danger"
-                      @click="deletePost(post.id)"
-                      v-if="is_delete_post(post)"
-                    >
-                      <i class="far fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
               </tr>
             </tbody>
           </table>
@@ -228,7 +230,8 @@ export default {
         { text: "Bản nháp", value: "draft" },
         { text: "Trả bài", value: "return" },
         { text: "Đã duyệt", value: "approved" },
-        { text: "Riêng tư", value: "private" }
+        { text: "Riêng tư", value: "private" },
+        { text: "Đã xóa", value: "deleted" }
       ],
       post_format: 0,
       post_status: 0,
@@ -320,6 +323,23 @@ export default {
           .delete("/auth/posts/" + id)
           .then(rs => {
             toastr.success("Thành công", "Xóa thành công");
+            this.getData(1);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    },
+    restorePost(id) {
+      var result = confirm("Bán muốn khôi phục bài viết này?");
+      let data = {
+        id: id
+      };
+      if (result) {
+        axios
+          .post("/auth/posts/restore/", data)
+          .then(rs => {
+            toastr.success("Thành công", "Khôi phục thành công");
             this.getData(1);
           })
           .catch(error => {
@@ -424,6 +444,27 @@ export default {
   .card-posts {
     .card-title {
       line-height: 36px;
+    }
+    .table-data {
+      tr {
+        .col-img {
+          width: 70px;
+        }
+        &:hover {
+          .row-actions {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+  .row-actions {
+    margin-top: 5px;
+    display: none;
+    span + span {
+      &:before {
+        content: "|";
+      }
     }
   }
   .pagination {

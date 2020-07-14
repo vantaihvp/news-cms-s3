@@ -43,6 +43,7 @@ Route::prefix('auth')->group(function () {
         Route::post('posts/get-slug/','API\PostController@getSlug');
         Route::post('posts/import','API\PostController@store_api');
         Route::post('posts/set-popular','API\PostController@setPopular');
+        Route::post('posts/restore','API\PostController@restore');
         //End post
         Route::resource('posts','API\PostController');
         Route::resource('seo','API\SeoController');

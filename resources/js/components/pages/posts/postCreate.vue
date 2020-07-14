@@ -267,6 +267,30 @@
             </ul>
           </div>
         </div>
+        <div class="card shadow-none card-post-url-video" v-if="post.format == 'video'">
+          <div class="card-header">
+            <div class="float-left">
+              <h4 class="card-title">Url Video</h4>
+            </div>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <input
+                type="text"
+                name="url-video"
+                id="url-video"
+                class="form-control"
+                placeholder="Url Video"
+                v-model="post.url_video"
+              />
+            </div>
+          </div>
+        </div>
         <div class="card shadow-none card-post-category">
           <div class="card-header">
             <div class="float-left">
@@ -400,30 +424,6 @@
               key="thumbnail"
               @changeThumbnail="changeThumbnail($event)"
             />
-          </div>
-        </div>
-        <div class="card shadow-none card-post-url-video" v-if="post.format == 'video'">
-          <div class="card-header">
-            <div class="float-left">
-              <h4 class="card-title">Url Video</h4>
-            </div>
-            <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
-              </button>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <input
-                type="text"
-                name="url-video"
-                id="url-video"
-                class="form-control"
-                placeholder="Url Video"
-                v-model="post.url_video"
-              />
-            </div>
           </div>
         </div>
       </div>

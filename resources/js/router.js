@@ -31,6 +31,7 @@ import postList from "./components/pages/posts/postList";
 import postEdit from "./components/pages/posts/postEdit";
 import postCreate from "./components/pages/posts/postCreate";
 import postsImport from "./components/pages/posts/postsImport";
+import postRevision from "./components/pages/posts/postRevision";
 //Photos
 import photoDashboard from "./components/pages/photo/photoDashboard";
 import photoList from "./components/pages/photo/photoList";
@@ -158,6 +159,12 @@ const routes = [{
                         path: "import",
                         name: "post.import",
                         component: postsImport
+                    },
+                    {
+                        path: "revision/:id",
+                        name: "post.revision",
+                        component: postRevision,
+                        props: true
                     }
                 ]
             },

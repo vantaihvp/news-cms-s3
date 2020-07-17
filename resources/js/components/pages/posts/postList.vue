@@ -149,7 +149,7 @@
         </div>
         <div class="table-responsive">
           <table class="table table-borderless table-striped table-data">
-            <thead>
+            <thead class="thead-light">
               <tr>
                 <th scope="col" class="col-thumbnail">Thumbnail</th>
                 <th scope="col">Tiêu đề</th>
@@ -157,7 +157,7 @@
                 <th scope="col">Tác giả</th>
                 <th scope="col" class="text-center">Quan tâm</th>
                 <th scope="col">Trạng thái</th>
-                <th scope="col">Date</th>
+                <th scope="col">Xuất bản</th>
               </tr>
             </thead>
             <tbody>
@@ -175,6 +175,9 @@
                         :to="{ name: 'post-edit', params: { id: post.id } }"
                         v-if="is_edit_post(post)"
                       >Chỉnh sửa</router-link>
+                    </span>
+                    <span class="revision">
+                      <router-link :to="{ name: 'post.revision', params: { id: post.id } }">Lịch sử</router-link>
                     </span>
                     <span class="delete">
                       <button

@@ -29,6 +29,7 @@
         "@websanova/vue-auth": "^3.0.8-beta",
         "ckeditor4-vue": "^0.2.0",
         "ckeditor5-vuejs": "^1.0.18",
+        "diff": "^4.0.2",
         "es6-promise": "^4.2.8",
         "laravel-vue-pagination": "^2.3.1",
         "toastr": "^2.1.4",

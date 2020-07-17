@@ -35,6 +35,7 @@ abstract class EloquentRepository implements RepositoryInterface
         );
     }
 
+
     /**
      * Get All
      * @return \Illuminate\Database\Eloquent\Collection|static[]

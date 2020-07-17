@@ -97,7 +97,7 @@
               v-if="this.$can('user-list')"
             >
               <i class="far fa-circle nav-icon"></i>
-              <p>Danh sách thành viên</p>
+              <p>Danh sách</p>
             </router-link>
           </li>
           <li class="nav-item">
@@ -131,7 +131,7 @@
               v-if="this.$can('role-list')"
             >
               <i class="far fa-circle nav-icon"></i>
-              <p>Danh sách vai trò</p>
+              <p>Danh sách</p>
             </router-link>
           </li>
           <li class="nav-item">

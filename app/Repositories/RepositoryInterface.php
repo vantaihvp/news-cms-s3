@@ -42,4 +42,5 @@ interface RepositoryInterface
      */
     public function delete($id);
     public function restore($id);
+    public function getSlug($slug,$id);
 }

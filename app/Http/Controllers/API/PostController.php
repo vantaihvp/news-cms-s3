@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+use DB;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,15 +10,21 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\Post\Category\CategoryRepositoryInterface;
 use App\Repositories\Photo\PhotoRepositoryInterface;
 use App\Repositories\Seo\SeoRepositoryInterface;
+use App\Repositories\Post\Revision\PostRevisionRepositoryInterface;
 class PostController extends Controller
 {
     protected $postRepository;
+    protected $postRevision;
     protected $categoryRepository;
     protected $photoRepository;
     protected $seoRepository;
-    public function __construct(PostRepositoryInterface $postRepository,CategoryRepositoryInterface $categoryRepository,PhotoRepositoryInterface $photoRepository,SeoRepositoryInterface $seoRepository)
-    {
+    public function __construct(PostRepositoryInterface $postRepository,
+                                PostRevisionRepositoryInterface $postRevision,
+                                CategoryRepositoryInterface $categoryRepository,
+                                PhotoRepositoryInterface $photoRepository,
+                                SeoRepositoryInterface $seoRepository){
         $this->postRepository = $postRepository;
+        $this->postRevision = $postRevision;
         $this->categoryRepository = $categoryRepository;
         $this->photoRepository = $photoRepository;
         $this->seoRepository = $seoRepository;
@@ -156,10 +163,10 @@ class PostController extends Controller
         $data = $this->postRepository->find($id);
         if($data){
             if($data->thumbnail_id){
-                $data['thumbnail_url'] = $this->photoRepository->find($data->thumbnail_id)->url;
+                $data['thumbnail_url'] = $this->photoRepository->find($data->thumbnail_id)['url'];
             }
             if($data->thumbnail_highlight){
-                $data['highlight_url'] = $this->photoRepository->find($data->thumbnail_highlight)->url;
+                $data['highlight_url'] = $this->photoRepository->find($data->thumbnail_highlight)['url'];
             }
             return response()->json(['success'=>$data]);
         }
@@ -200,45 +207,61 @@ class PostController extends Controller
         $this->validate($request, [
             'title' => 'required'
         ]);
-        $user = \Auth::user();
-        $attributes = $request->all();
-        $attributes['date'] = Carbon::parse($request->date);
-        $attributes['slug'] = $this->postRepository->getSlug($this->slugify($request->get('slug')),$id);
-        $request['id'] = $id;
-        if($request->filled('selectedTags')){
-            $arrTags = array();
-            foreach ($request->selectedTags as $key => $item) {
-                if(!$this->categoryRepository->find($item['id'])){
-                    $tags = array(
-                        'title' => $item['title'],
-                        'slug'  => $this->slugify($item['title']),
-                        'taxonomy' => 'tag',
-                        'user_id'   => $user->id,
-                    );
-                    $arrTags[] = $this->categoryRepository->create($tags)->id;
-                }else{
-                    $arrTags[] = $item['id'];
+        DB::beginTransaction();
+        try {
+            //Tạo bảng sao lưu
+            $post_old = $this->postRepository->find($id)->toArray();
+            $post_old['post_id'] = $post_old['id'];
+            unset($post_old['id']);
+            $post_revision = $this->postRevision->create($post_old);
+            //End Tạo bảng sao lưu
+            $user = \Auth::user();
+            $attributes = $request->all();
+            $attributes['date'] = Carbon::parse($request->date);
+            $attributes['slug'] = $this->postRepository->getSlug($this->slugify($request->get('slug')),$id);
+            $request['id'] = $id;
+            if($request->filled('selectedTags')){
+                $arrTags = array();
+                foreach ($request->selectedTags as $key => $item) {
+                    if(!$this->categoryRepository->find($item['id'])){
+                        $tags = array(
+                            'title' => $item['title'],
+                            'slug'  => $this->slugify($item['title']),
+                            'taxonomy' => 'tag',
+                            'user_id'   => $user->id,
+                        );
+                        $arrTags[] = $this->categoryRepository->create($tags)->id;
+                    }else{
+                        $arrTags[] = $item['id'];
+                    }
                 }
+                $attributes['tags_id'] = json_encode($arrTags);
             }
-            $attributes['tags_id'] = json_encode($arrTags);
-        }
-        if($request->filled('categories_id')){
-            $attributes['categories_id'] = json_encode($request->categories_id);
-        }
-        if($request->filled('related_posts')){
-            $attributes['related_posts'] = json_encode($request->related_posts);
-        }
-        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
-        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->excerpt;
-        $seo_id = $this->postRepository->find($id)->seo_id;
-        if($seo_id){
-            $this->seoRepository->update($seo_id,$data_seo);
-        }else{
-            $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
-        }        
-        $data = $this->postRepository->update($id,$attributes);
-        if($data){
-            return response()->json(['success'=>$data]);
+            if($request->filled('categories_id')){
+                $attributes['categories_id'] = json_encode($request->categories_id);
+            }
+            if($request->filled('related_posts')){
+                $attributes['related_posts'] = json_encode($request->related_posts);
+            }
+            $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
+            $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->excerpt;
+            $seo_id = $this->postRepository->find($id)->seo_id;
+            if($seo_id){
+                $this->seoRepository->update($seo_id,$data_seo);
+            }else{
+                $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
+            }        
+            $data = $this->postRepository->update($id,$attributes);
+            if($data){
+                DB::commit();
+                return response()->json(['success'=>$data]);
+            }
+            DB::rollback();
+            return response()->json(['error'=>'Lỗi']);
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollback();
+            return response()->json(['error'=>$th]);
         }
     }
 
@@ -271,8 +294,8 @@ class PostController extends Controller
         return response()->json(['error'=>$id]);
     }
 
-    public function getSlug($slug,$id){
-        return $this->postRepository->getSlug($slug,$id);
+    public function getSlug(Request $request){
+        return $this->postRepository->getSlug($request->slug,$request->id);
     }
 
     public function setPopular(Request $request){

@@ -44,7 +44,11 @@ Route::prefix('auth')->group(function () {
         Route::post('posts/import','API\PostController@store_api');
         Route::post('posts/set-popular','API\PostController@setPopular');
         Route::post('posts/restore','API\PostController@restore');
+        Route::get('posts/revision/{id}','API\PostRevisionController@getByPostId');
         //End post
+        //Post Revision
+        Route::resource('revision', 'API\PostRevisionController');
+        //Post Revision
         Route::resource('posts','API\PostController');
         Route::resource('seo','API\SeoController');
         Route::resource('ads-banner','API\AdsBannerController');

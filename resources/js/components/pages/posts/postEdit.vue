@@ -267,7 +267,7 @@
         <div class="card shadow-none card-post-format">
           <div class="card-header">
             <div class="float-left">
-              <h4 class="card-title">Định dạng {{ post.format }}</h4>
+              <h4 class="card-title">Định dạng</h4>
             </div>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse">

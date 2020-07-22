@@ -32,7 +32,14 @@ import postEdit from "./components/pages/posts/postEdit";
 import postCreate from "./components/pages/posts/postCreate";
 import postsImport from "./components/pages/posts/postsImport";
 import postRevision from "./components/pages/posts/postRevision";
+import postsPopular from "./components/pages/posts/postsPopular";
 //Photos
+//slider
+import sliderList from "./components/pages/slider-banner/sliderList";
+import sliderCreate from "./components/pages/slider-banner/sliderCreate";
+import categoriesSliderList from "./components/pages/slider-banner/category/CategoriesSliderList";
+import categoriesSliderCreate from "./components/pages/slider-banner/category/CategoriesSliderCreate";
+//end slider
 import photoDashboard from "./components/pages/photo/photoDashboard";
 import photoList from "./components/pages/photo/photoList";
 import photosImport from "./components/pages/photo/photosImport";
@@ -165,6 +172,11 @@ const routes = [{
                         name: "post.revision",
                         component: postRevision,
                         props: true
+                    },
+                    {
+                        path: "popular",
+                        name: "post.popular",
+                        component: postsPopular
                     }
                 ]
             },
@@ -182,6 +194,48 @@ const routes = [{
                         name: "photo.import",
                         component: photosImport
                     }
+                ]
+            },
+            {
+                path: "slider-banner",
+                component: photoDashboard,
+                children: [{
+                        path: "",
+                        name: "slider.list",
+                        component: sliderList
+                    },
+                    {
+                        path: "create",
+                        name: "slider.create",
+                        component: sliderCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "slider.edit",
+                        component: sliderCreate,
+                        props: true
+                    },
+                ]
+            },
+            {
+                path: "categoy-slider",
+                component: photoDashboard,
+                children: [{
+                        path: "",
+                        name: "categoriesslider.list",
+                        component: categoriesSliderList
+                    },
+                    {
+                        path: "create",
+                        name: "categoriesslider.create",
+                        component: categoriesSliderCreate
+                    },
+                    {
+                        path: "edit/:id",
+                        name: "categoriesslider.edit",
+                        component: categoriesSliderCreate,
+                        props: true
+                    },
                 ]
             },
             {

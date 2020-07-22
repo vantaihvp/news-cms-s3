@@ -189,6 +189,7 @@ export default {
       var diff = jsdiff.diffChars(before, after);
       var fragment = "";
       diff.forEach(function(part) {
+        console.log(part);
         // green for additions, red for deletions
         // grey for common parts
         bgColor = part.added ? "green" : part.removed ? "red" : "white";

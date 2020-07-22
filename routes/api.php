@@ -40,6 +40,7 @@ Route::prefix('auth')->group(function () {
         Route::resource('roles','RoleController');
         Route::get('permissions','RoleController@getAllPermissions');
         //Post
+        Route::resource('posts-popular', 'API\PostsPopularController');
         Route::post('posts/get-slug/','API\PostController@getSlug');
         Route::post('posts/import','API\PostController@store_api');
         Route::post('posts/set-popular','API\PostController@setPopular');
@@ -53,5 +54,9 @@ Route::prefix('auth')->group(function () {
         Route::resource('seo','API\SeoController');
         Route::resource('ads-banner','API\AdsBannerController');
         Route::resource('ads-zone','API\AdsZoneController');
+        //Slider
+        Route::resource('category-slider','API\CategorySliderController');
+        Route::resource('slider-banner','API\SliderController');
+        //End slider
     });
 });

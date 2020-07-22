@@ -25,6 +25,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Post\Revision\PostRevisionRepository::class
         );
         $this->app->singleton(
+            \App\Repositories\Post\Popular\PostsPopularRepositoryInterface::class,
+            \App\Repositories\Post\Popular\PostsPopularRepository::class
+        );
+        $this->app->singleton(
             \App\Repositories\Post\Category\CategoryRepositoryInterface::class,
             \App\Repositories\Post\Category\CategoryRepository::class
         );
@@ -52,6 +56,16 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Menu\MenuRepositoryInterface::class,
             \App\Repositories\Menu\MenuRepository::class
         );
+        //slider
+        $this->app->singleton(
+            \App\Repositories\Slider\SliderRepositoryInterface::class,
+            \App\Repositories\Slider\SliderRepository::class
+        );
+        $this->app->singleton(
+            \App\Repositories\Slider\Categories\CategoriesSliderRepositoryInterface::class,
+            \App\Repositories\Slider\Categories\CategoriesSliderRepository::class
+        );
+        //end slider
     }
 
     /**

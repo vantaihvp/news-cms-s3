@@ -10,6 +10,8 @@
                         type: 'textbox',
                         multiline: true,
                         name: 'embed',
+                        minWidth: 350,
+                        minHeight: 150
                     }, ],
                     onSubmit: function (api) {
                         console.log(api);

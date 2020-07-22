@@ -358,48 +358,6 @@
             ></multiselect>
           </div>
         </div>
-        <div class="card shadow-none card-post-highlight">
-          <div class="card-header">
-            <div class="float-left">
-              <h4 class="card-title">Highlight</h4>
-            </div>
-            <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
-              </button>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <input
-                type="checkbox"
-                v-model="post.is_featured"
-                name="is_featured"
-                id="is_featured"
-                data-bootstrap-switch
-              />
-              <label for="is_featured">Highlight</label>
-            </div>
-            <div class="form-group" v-if="post.is_featured">
-              <img
-                src="/images/admin/placeholder.png"
-                class="img-fluid img-thumbnail"
-                v-if="thumbnailHighlight.url == ''"
-              />
-              <img
-                :src="thumbnailHighlight.url"
-                class="img-fluid img-thumbnail"
-                v-if="thumbnailHighlight.url"
-              />
-              <ThumbnailModal
-                v-model="post.thumbnail_highlight"
-                id="highlight"
-                key="highlight"
-                @changeThumbnail="changeThumbnail($event)"
-              />
-            </div>
-          </div>
-        </div>
         <div class="card shadow-none card-post-thumbnail">
           <div class="card-header">
             <div class="float-left">
@@ -481,9 +439,6 @@ export default {
       thumbnail: {
         url: ""
       },
-      thumbnailHighlight: {
-        url: ""
-      },
       categories: [],
       selectedCategories: [],
       tagOptions: [],
@@ -509,6 +464,7 @@ export default {
         relative_urls: false,
         remove_script_host: false,
         toolbar2: "embed_button",
+        content_css: "/css/custom-editor.css",
         plugins: [
           "advlist autolink lists link image charmap print preview hr anchor pagebreak",
           "searchreplace wordcount visualblocks visualchars code fullscreen",
@@ -520,18 +476,13 @@ export default {
   },
   methods: {
     changeThumbnail(obj) {
-      console.log(obj);
-      if (obj.type === "highlight") {
-        this.thumbnailHighlight.url = obj.url;
-      } else {
-        this.thumbnail.url = obj.url;
-      }
+      this.thumbnail.url = obj.url;
     },
     insertMedia(photo) {
       let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}" style="max-width:100%"/>`;
       let caption = "";
       if (photo.caption != null) {
-        caption = `<p class="wp-caption-text">${photo.caption}</p>`;
+        caption = `<p class="wp-caption-text aligncenter">${photo.caption}</p>`;
       }
       this.$refs.tm.editor.insertContent(tagImg + caption);
     },
@@ -617,9 +568,6 @@ export default {
       // } else {
       //   el.style.position = "relative";
       // }
-    },
-    abc() {
-      console.log(this.seoObj);
     }
   },
   created() {

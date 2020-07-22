@@ -153,7 +153,6 @@ export default {
         });
     },
     submitEditUser(event) {
-      // let formData = new FormData(event.currentTarget);
       let dataForm = {
         name: this.name,
         pseudonym: this.pseudonym,
@@ -169,7 +168,7 @@ export default {
         .then(rs => {
           toastr.success("Thành công", "Chỉnh sửa thành công");
           this.$router.push({
-            path: "/admin/user"
+            path: "/admin/users"
           });
         })
         .catch(error => {

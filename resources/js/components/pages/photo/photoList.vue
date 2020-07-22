@@ -186,12 +186,15 @@ export default {
           toastr.success("Thành công", "Upload thành công");
         })
         .catch(function(error) {
-          console.log(error);
-          toastr.error("Lỗi", "Upload không thành công");
+          let str_error = "<ul>";
+          error.response.data.errors.image.forEach(element => {
+            str_error += `<li>${element}</li>`;
+          });
+          str_error += `</ul>`;
+          toastr.error(str_error);
         });
     },
     onImageChange(e) {
-      console.log(e.target.files[0]);
       this.image = e.target.files[0];
       this.uploadPhoto(e);
     },

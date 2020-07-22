@@ -155,7 +155,6 @@
                 <th scope="col">Tiêu đề</th>
                 <th scope="col">Chuyên mục</th>
                 <th scope="col">Tác giả</th>
-                <th scope="col" class="text-center">Quan tâm</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Xuất bản</th>
               </tr>
@@ -195,10 +194,6 @@
                 </td>
                 <td scope="col">{{post.categories_name}}</td>
                 <td scope="col">{{post.user_name}}</td>
-                <td scope="col" class="text-center popular">
-                  <i class="fas fa-star" v-if="post.popular" @click="setPopular(post)"></i>
-                  <i class="far fa-star" v-else @click="setPopular(post)"></i>
-                </td>
                 <td scope="col">{{post.status}}</td>
                 <td scope="col">{{post.date}}</td>
               </tr>
@@ -305,9 +300,6 @@ export default {
       if (this.post_format === "video" || this.post_format === "default") {
         paramsData.format = this.post_format;
       }
-      if (this.post_format === "featured") {
-        paramsData.is_featured = 1;
-      }
       if (this.selectedCategories.length) {
         let categories = [];
         this.selectedCategories.forEach(e => {
@@ -405,22 +397,6 @@ export default {
         return true;
       }
       return false;
-    },
-    setPopular(post) {
-      axios
-        .post("auth/posts/set-popular", post)
-        .then(rs => {
-          this.$toastr.success("Thành công", "Chỉnh sửa thành công");
-          post.popular = !post.popular;
-        })
-        .catch(error => {
-          let list_error = "";
-          Object.values(error.response.data.errors).forEach(
-            e => (list_error += `<li>${e}</li>`)
-          );
-          this.errors = error.response.data.errors;
-          this.$toastr.error(list_error, "Lỗi");
-        });
     }
   }
 };

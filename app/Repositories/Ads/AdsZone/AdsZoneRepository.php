@@ -22,6 +22,5 @@ class AdsZoneRepository extends EloquentRepository implements AdsZoneRepositoryI
             $rs->where('title','LIKE',"%$s%");
         }
         $rs = $rs->paginate($per_page);
-        return $rs;
     }
 }

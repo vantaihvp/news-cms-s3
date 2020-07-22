@@ -272,6 +272,10 @@ html.os-html,html.os-html>.os-host{display:block;overflow:hidden;box-sizing:bord
   width: 100% !important;
 }
 
+.mce-content-body {
+  font-size: 20px;
+}
+
 @media (min-width: 768px) {
   body:not(.sidebar-mini-md) .content-wrapper,
   body:not(.sidebar-mini-md) .main-footer,

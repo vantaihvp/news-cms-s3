@@ -15,6 +15,7 @@ mix.js('resources/js/app.js', 'public/js')
     .js('resources/access-admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js', 'public/js')
     .js('resources/access-admin/admin-lte/js/adminlte.min.js', 'public/js')
     .js('resources/access-admin/admin-lte/js/custome.js', 'public/js')
+    .sass('resources/sass/custom-editor.scss', 'public/css')
     .sass('resources/sass/app.scss', 'public/css');
 
 mix.scripts([

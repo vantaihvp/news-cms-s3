@@ -16,7 +16,7 @@ class PhotoRepository extends EloquentRepository implements PhotoRepositoryInter
     } 
     public function getWithPaginate($attributes){
         $s  = !empty($attributes['s']) ? $attributes['s'] : '';
-        $per_page   = $attributes['per_page'] ? $attributes['per_page'] : 20;
+        $per_page   = $attributes['per_page'] ? $attributes['per_page'] : 18;
         $rs = $this->_model->orderBy('id','DESC');
         if($s){
             $rs->where('title','LIKE',"%$s%");

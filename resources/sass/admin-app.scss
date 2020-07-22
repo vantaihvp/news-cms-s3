@@ -22,6 +22,10 @@
     width: 100% !important;
 }
 
+.mce-content-body {
+    font-size: 20px;
+}
+
 @media (min-width: 768px) {
 
     body:not(.sidebar-mini-md) .content-wrapper,

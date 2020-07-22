@@ -48,7 +48,11 @@ class PhotoController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-           'image' => 'required|image|max:2048'
+           'image' => 'required|image|max:200'
+        ],[
+            'image.required' => 'Chưa chọn hình ảnh',
+            'image.image' => 'Định dạng không được hỗ trợ',
+            'image.max' => 'Giới hạn tối đa là 200kb',
         ]);
         $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7');
         $month = $dt->month;

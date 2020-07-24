@@ -58,10 +58,10 @@
             <tbody>
               <tr>
                 <td class="after">
-                  <div style="width:700px" v-html="post_after.title"></div>
+                  <div style="width:700px" class="title-after"></div>
                 </td>
                 <td class="before">
-                  <div style="width:700px" v-html="post_before.title"></div>
+                  <div style="width:700px" class="title-before"></div>
                 </td>
               </tr>
             </tbody>
@@ -95,8 +95,8 @@ import "toastr/build/toastr.min.css";
 export default {
   props: {
     id: {
-      require: true
-    }
+      require: true,
+    },
   },
   data() {
     return {
@@ -104,72 +104,71 @@ export default {
       post_main: {},
       posts_revision: {},
       post_before: {},
-      post_after: {}
+      post_after: {},
     };
   },
   methods: {
     getPostsRevision(id) {
       let dataForm = {
-        post_id: this.id
+        post_id: this.id,
       };
       axios
         .get("/auth/revision/", { params: dataForm })
-        .then(response => {
+        .then((response) => {
           this.posts_revision = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
     getPost(id) {
       axios
         .get("/auth/posts/" + id)
-        .then(response => {
+        .then((response) => {
           if (response.data.success) {
             this.post_main = response.data.success;
           } else {
             this.$toastr.error("Lỗi", response.data.errors);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
     getPostsCompare(ids) {
       let dataForm = {
-        include: ids
+        include: ids,
       };
       axios
         .get("/auth/revision", { params: dataForm })
-        .then(response => {
-          console.log(response);
+        .then((response) => {
+          // console.log(response);
           // compare
           if (response.data.length == 2) {
             this.post_after = response.data[0];
             this.post_before = response.data[1];
-            this.post_after.title = this.diff(
+            let diff_title = this.diff(
               response.data[1].title,
               response.data[0].title
             );
-            this.post_after.description = this.diff(
-              response.data[1].description,
-              response.data[0].description
-            );
+
+            document.querySelector(".title-before").innerHTML =
+              diff_title.before;
+            document.querySelector(".title-after").innerHTML = diff_title.after;
           } else {
             Object.assign(this.post_after, this.post_main);
             //this.post_after = this.post_main;
             this.post_before = response.data[0];
-            this.post_after.title = this.diff(
+            let diff_title = this.diff(
               response.data[0].title,
               this.post_after.title
             );
-            this.post_after.description = this.diff(
-              response.data[0].description,
-              this.post_after.description
-            );
+            document.querySelector(".title-before").innerHTML =
+              diff_title.before;
+            document.querySelector(".title-after").innerHTML = diff_title.after;
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -184,29 +183,27 @@ export default {
       this.getPostsCompare(ids.toString());
     },
     diff(before, after) {
-      var bgColor = "";
-      var span = "";
-      var diff = jsdiff.diffChars(before, after);
-      var fragment = "";
-      diff.forEach(function(part) {
-        console.log(part);
-        // green for additions, red for deletions
-        // grey for common parts
-        bgColor = part.added ? "green" : part.removed ? "red" : "white";
-        let color = "black";
-        let padding = "0";
-        if (bgColor != "white") {
-          color = "white";
-          padding = "0px 5px";
+      var diff = jsdiff.diffWords(before, after);
+      var result = {
+        before: "",
+        after: "",
+      };
+      diff.forEach(function (part) {
+        if (part.removed) {
+          result.before += `<span style=" background-color: green;color: #fff">${part.value}</span>`;
+        } else if (part.added) {
+          result.after += `<span style="background-color: red;color: #fff">${part.value}</span>`;
+        } else {
+          result.before += part.value;
+          result.after += part.value;
         }
-        span += `<span style="color: ${color}; background-color: ${bgColor};">${part.value}</span>`;
       });
-      return span;
-    }
+      return result;
+    },
   },
   created() {
     this.getPostsRevision(this.id);
     this.getPost(this.id);
-  }
+  },
 };
 </script>

@@ -31,7 +31,7 @@
                 </td>
                 <td scope="col">{{ post.title }}</td>
                 <td>
-                  <button class="btn btn-danger" @click="deletePost(post.pid)">Xóa</button>
+                  <button class="btn btn-danger" @click="deletePost(post.id)">Xóa</button>
                 </td>
               </tr>
             </tbody>
@@ -88,13 +88,13 @@ var moment = require("moment");
 export default {
   props: {
     message: String,
-    status: ""
+    status: "",
   },
   data() {
     return {
       posts: {},
       postsValue: null,
-      postsSearch: []
+      postsSearch: [],
     };
   },
   created() {
@@ -108,9 +108,9 @@ export default {
     getPosts(query) {
       if (query.length > 5) {
         let paramsData = {
-          s: query
+          s: query,
         };
-        axios.get("auth/posts", { params: paramsData }).then(data => {
+        axios.get("auth/posts", { params: paramsData }).then((data) => {
           this.postsSearch = data.data.success.data;
         });
       }
@@ -122,22 +122,22 @@ export default {
       } else {
         paramsData["page"] = page;
       }
-      axios.get("auth/posts-popular", { params: paramsData }).then(data => {
+      axios.get("auth/posts-popular", { params: paramsData }).then((data) => {
         this.posts = data.data.success;
       });
     },
     createPopular() {
       let dataForm = {
-        id: this.postsValue.id
+        id: this.postsValue.id,
       };
       axios
         .post("auth/posts-popular", dataForm)
-        .then(response => {
+        .then((response) => {
           $("#popularModal").modal("hide");
           toastr.success("Thành công", "Thêm thành công");
           this.getData(1);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -146,11 +146,11 @@ export default {
       if (result) {
         axios
           .delete("/auth/posts-popular/" + id)
-          .then(rs => {
+          .then((rs) => {
             toastr.success("Thành công", "Xóa thành công");
             this.getData(1);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       }
@@ -158,21 +158,21 @@ export default {
     restorePost(id) {
       var result = confirm("Bán muốn khôi phục bài viết này?");
       let data = {
-        id: id
+        id: id,
       };
       if (result) {
         axios
           .post("/auth/posts/restore/", data)
-          .then(rs => {
+          .then((rs) => {
             toastr.success("Thành công", "Khôi phục thành công");
             this.getData(1);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

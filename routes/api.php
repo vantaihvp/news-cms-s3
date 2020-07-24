@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('posts','API\PostController');
+Route::get('posts-popular', 'API\PostsPopularController@index');
+Route::get('slider-banner','API\SliderController@index');
 Route::get('categories', 'API\CategoryController@getCategories');
 Route::get('categories/{id}', 'API\CategoryController@show');
 Route::get('tags', 'API\CategoryController@getTags');

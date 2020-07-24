@@ -58,10 +58,10 @@
             <tbody>
               <tr>
                 <td class="after">
-                  <div style="width:700px" class="title-after"></div>
+                  <div style="width:700px" class="title-post-compare title-after"></div>
                 </td>
                 <td class="before">
-                  <div style="width:700px" class="title-before"></div>
+                  <div style="width:700px" class="title-post-compare title-before"></div>
                 </td>
               </tr>
             </tbody>
@@ -151,10 +151,13 @@ export default {
               response.data[1].title,
               response.data[0].title
             );
-
-            document.querySelector(".title-before").innerHTML =
-              diff_title.before;
-            document.querySelector(".title-after").innerHTML = diff_title.after;
+            document.querySelectorAll(".title-post-compare").innerHTML = "";
+            document
+              .querySelector(".title-before")
+              .appendChild(diff_title.before);
+            document
+              .querySelector(".title-after")
+              .appendChild(diff_title.after);
           } else {
             Object.assign(this.post_after, this.post_main);
             //this.post_after = this.post_main;
@@ -163,9 +166,13 @@ export default {
               response.data[0].title,
               this.post_after.title
             );
-            document.querySelector(".title-before").innerHTML =
-              diff_title.before;
-            document.querySelector(".title-after").innerHTML = diff_title.after;
+            document.querySelector(".title-post-compare").innerHTML = "";
+            document
+              .querySelector(".title-before")
+              .appendChild(diff_title.before);
+            document
+              .querySelector(".title-after")
+              .appendChild(diff_title.after);
           }
         })
         .catch((error) => {
@@ -188,16 +195,30 @@ export default {
         before: "",
         after: "",
       };
+      var fragment = document.createDocumentFragment(),
+        fragment2 = document.createDocumentFragment();
+      var span1 = null,
+        span2 = null;
       diff.forEach(function (part) {
+        span1 = document.createElement("span");
+        span2 = document.createElement("span");
         if (part.removed) {
-          result.before += `<span style=" background-color: green;color: #fff">${part.value}</span>`;
+          span1.style.color = "green";
+          span1.appendChild(document.createTextNode(part.value));
+          fragment.appendChild(span1);
         } else if (part.added) {
-          result.after += `<span style="background-color: red;color: #fff">${part.value}</span>`;
+          span2.style.color = "red";
+          span2.appendChild(document.createTextNode(part.value));
+          fragment2.appendChild(span2);
         } else {
-          result.before += part.value;
-          result.after += part.value;
+          span1.appendChild(document.createTextNode(part.value));
+          fragment.appendChild(span1);
+          span2.appendChild(document.createTextNode(part.value));
+          fragment2.appendChild(span2);
         }
       });
+      result.before = fragment;
+      result.after = fragment2;
       return result;
     },
   },

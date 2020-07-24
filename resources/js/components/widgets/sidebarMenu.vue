@@ -21,7 +21,7 @@
               <p>Tất cả bài viết</p>
             </router-link>
           </li>
-          <li class="nav-item" v-if="this.$can('post-list')">
+          <li class="nav-item" v-if="this.$can('post-popular-access')">
             <router-link exact class="nav-link" :to="{ name: 'post.popular' }">
               <i class="far fa-circle nav-icon"></i>
               <p>Bài viết nổi bật</p>
@@ -58,7 +58,11 @@
         </router-link>
       </li>
 
-      <li class="nav-item has-treeview" @click="toggleMenu">
+      <li
+        class="nav-item has-treeview"
+        @click="toggleMenu"
+        v-if="this.$can('slider-banner-access')"
+      >
         <a href="#" class="nav-link">
           <i class="fal fa-ad"></i>
           <p>
@@ -186,8 +190,8 @@ export default {
     toggleMenu(e) {
       var menu = e.currentTarget; // Using a class instead, see note below.
       menu.classList.add("menu-open");
-    }
-  }
+    },
+  },
 };
 </script>
 

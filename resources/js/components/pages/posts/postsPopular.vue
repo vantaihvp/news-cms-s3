@@ -5,7 +5,7 @@
         <div class="float-left">
           <h3 class="card-title">
             <i class="fas fa-edit"></i>
-            Danh sách bài viết nổi bật
+            Danh sách bài viết được quan tâm
           </h3>
         </div>
         <div class="card-tools">

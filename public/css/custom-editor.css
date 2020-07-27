@@ -1,10 +1,32 @@
+.mce-container-body {
+  background-color: #fff;
+}
+
 .mce-content-body {
   font-size: 20px;
+}
+
+.mce-content-body img {
+  max-width: 100%;
+  height: auto !important;
+}
+
+.mce-content-body figure {
+  max-width: 100%;
+}
+
+.mce-top-part {
+  background-color: #fff;
 }
 
 .aligncenter {
   margin: auto;
   text-align: center;
+}
+
+.alignnone img,
+.aligncenter img {
+  width: 100%;
 }
 
 .wp-caption-text {

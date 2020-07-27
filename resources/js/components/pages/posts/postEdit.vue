@@ -82,7 +82,7 @@
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="form-group form-content">
+                <div class="form-group form-content group-content" v-scroll="handleScroll">
                   <label>Nội dung</label>
                   <MediaContent ref="mediacontent" @insertMedia="insertMedia($event)" />
                   <tinymce
@@ -91,6 +91,7 @@
                     :other_options="tinymceOptions"
                     ref="tm"
                   ></tinymce>
+                  <div class="end-tinymce"></div>
                 </div>
               </div>
             </div>
@@ -345,8 +346,12 @@
             </div>
           </div>
           <div class="card-body">
-            <ul>
-              <li v-for="category in categories" :key="category.id">
+            <ul class="category-list">
+              <li
+                v-for="category in categories"
+                :key="category.id"
+                v-bind:class="[category.parent_id ? 'child' : 'parent' ]"
+              >
                 <div class="form-check icheck-primary">
                   <label class="form-check-label">
                     <input
@@ -440,18 +445,30 @@ import "../../../plugins/tinymce/embed_button";
 export default {
   components: {
     SearchEngineOptimize,
-    MediaContent
+    MediaContent,
+  },
+  directive: {
+    scroll: {
+      inserted: function (el, binding) {
+        let f = function (evt) {
+          if (binding.value(evt, el)) {
+            window.removeEventListener("scroll", f);
+          }
+        };
+        window.addEventListener("scroll", f);
+      },
+    },
   },
   props: {
     id: {
-      require: true
-    }
+      require: true,
+    },
   },
   data() {
     return {
       seoObj: {
         title: "",
-        description: ""
+        description: "",
       },
       post: {
         title: "",
@@ -469,10 +486,10 @@ export default {
         format: "default",
         thumbnail_id: "",
         thumbnail_highlight: "",
-        url_video: ""
+        url_video: "",
       },
       thumbnail: {
-        url: ""
+        url: "",
       },
       categories: [],
       selectedCategories: [],
@@ -486,13 +503,13 @@ export default {
       value: null,
       momentFormat: {
         // Date to String
-        stringify: date => {
+        stringify: (date) => {
           return date ? moment(date).format("DD/MM/YYYY H:mm:ss") : "";
         },
         // String to Date
-        parse: value => {
+        parse: (value) => {
           return value ? moment(value, "DD/MM/YYYY H:mm:ss").toDate() : null;
-        }
+        },
       },
       tinymceOptions: {
         convert_urls: true,
@@ -504,10 +521,10 @@ export default {
           "advlist autolink lists link image charmap print preview hr anchor pagebreak",
           "searchreplace wordcount visualblocks visualchars code fullscreen",
           "insertdatetime media nonbreaking save table contextmenu directionality",
-          "template paste textcolor colorpicker textpattern imagetools toc help emoticons hr codesample embed_button autoresize"
-        ]
+          "template paste textcolor colorpicker textpattern imagetools toc help emoticons hr codesample embed_button autoresize",
+        ],
       },
-      edit_slug: false
+      edit_slug: false,
     };
   },
   methods: {
@@ -525,7 +542,7 @@ export default {
     getData() {
       axios
         .get("/auth/posts/" + this.id + "/edit")
-        .then(response => {
+        .then((response) => {
           if (response.data.success) {
             this.post = response.data.success;
             this.post.date = new Date(response.data.success.date);
@@ -536,22 +553,22 @@ export default {
           } else {
             this.$toastr.error("Lỗi", response.data.errors);
             this.$router.push({
-              path: "/admin/posts"
+              path: "/admin/posts",
             });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
     getRelatedPosts() {
       if (this.post.related_posts) {
         let posts = JSON.parse(this.post.related_posts);
-        posts.forEach(el => {
-          axios.get("/auth/posts/" + el).then(rs => {
+        posts.forEach((el) => {
+          axios.get("/auth/posts/" + el).then((rs) => {
             this.selectedRelated.push({
               id: rs.data.success.id,
-              title: rs.data.success.title
+              title: rs.data.success.title,
             });
           });
         });
@@ -559,12 +576,11 @@ export default {
     },
     getTagsPost() {
       let tags = JSON.parse(this.post.tags_id);
-      tags.forEach(el => {
-        axios.get("/auth/categories/" + el).then(rs => {
-          console.log(rs);
+      tags.forEach((el) => {
+        axios.get("/auth/categories/" + el).then((rs) => {
           this.selectedTags.push({
             id: rs.data.success.id,
-            title: rs.data.success.title
+            title: rs.data.success.title,
           });
         });
       });
@@ -575,7 +591,7 @@ export default {
         let paramsData = {};
         paramsData["s"] = query;
         paramsData["per_page"] = 100;
-        axios.get("auth/posts", { params: paramsData }).then(response => {
+        axios.get("auth/posts", { params: paramsData }).then((response) => {
           this.relatedPostsOptions = response.data.success.data;
           this.isLoadingRelated = false;
         });
@@ -585,7 +601,7 @@ export default {
       this.post.layout_name = e.target.dataset.id;
     },
     getTaxonomy() {
-      axios.get("auth/categories/get-categories").then(data => {
+      axios.get("auth/categories/get-categories").then((data) => {
         this.categories = data.data.success;
       });
     },
@@ -597,7 +613,7 @@ export default {
         paramsData["per_page"] = 100;
         axios
           .get("auth/tags/get-tags", { params: paramsData })
-          .then(response => {
+          .then((response) => {
             this.tagOptions = response.data.success.data;
             this.isLoading = false;
           });
@@ -606,7 +622,7 @@ export default {
     addTag(newTag) {
       const tag = {
         title: newTag,
-        id: newTag.substring(0, 2) + Math.floor(Math.random() * 10000000)
+        id: newTag.substring(0, 2) + Math.floor(Math.random() * 10000000),
       };
       this.tagOptions.push(tag);
       this.selectedTags.push(tag);
@@ -614,9 +630,35 @@ export default {
     limitText(count) {
       return `và ${count} lựa chọn khác`;
     },
+    handleScroll: function (evt, el) {
+      let mce = document.querySelector(".mce-top-part");
+      let media_content = document.querySelector(".media-content");
+      if (
+        el.getBoundingClientRect().top <= 0 &&
+        document.querySelector(".end-tinymce").getBoundingClientRect().top > 300
+      ) {
+        mce.style.position = "fixed";
+        mce.style.top = "25px";
+        mce.style.width = this.getMceOffest().width - 2 + "px";
+        media_content.style.position = "fixed";
+        media_content.style.top = "0px";
+        media_content.style.width = this.getMceOffest().width - 2 + "px";
+        document.querySelector(".group-content").classList.add("fixed");
+      } else {
+        mce.style.position = "inherit";
+        media_content.style.position = "inherit";
+        document.querySelector(".group-content").classList.remove("fixed");
+      }
+    },
+    getMceOffest() {
+      return {
+        height: document.querySelector(".mce-panel").offsetHeight,
+        width: document.querySelector(".mce-panel").offsetWidth,
+      };
+    },
     submitPost() {
       let relatedPostArray = [];
-      this.selectedRelated.forEach(e => {
+      this.selectedRelated.forEach((e) => {
         relatedPostArray.push(e.id);
       });
       let dataForm = this.post;
@@ -626,17 +668,17 @@ export default {
       dataForm.seo = this.seoObj;
       axios
         .put("auth/posts/" + this.post.id, dataForm)
-        .then(rs => {
+        .then((rs) => {
           let post_id = rs.data.success.id;
           this.$toastr.success("Thành công", "Chỉnh sửa thành công");
           this.$router.push({
-            path: "/admin/posts"
+            path: "/admin/posts",
           });
         })
-        .catch(error => {
+        .catch((error) => {
           let list_error = "";
           Object.values(error.response.data.errors).forEach(
-            e => (list_error += `<li>${e}</li>`)
+            (e) => (list_error += `<li>${e}</li>`)
           );
           this.errors = error.response.data.errors;
           this.$toastr.error(list_error, "Lỗi");
@@ -655,19 +697,19 @@ export default {
       dataForm.id = this.post.id;
       axios
         .post("auth/posts/get-slug/", dataForm)
-        .then(rs => {
+        .then((rs) => {
           this.post.slug = rs.data;
           this.edit_slug = !this.edit_slug;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
-    }
+    },
   },
   created() {
     this.getData();
     this.getTaxonomy();
-  }
+  },
 };
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
@@ -693,6 +735,14 @@ export default {
     padding-left: 0px;
   }
 }
+.category-list {
+  .parent {
+    font-weight: bold;
+  }
+  .child {
+    padding-left: 15px;
+  }
+}
 .layout-post {
   display: flex;
   list-style-type: none;
@@ -709,5 +759,12 @@ export default {
       }
     }
   }
+}
+.mce-top-part {
+  background-color: #fff;
+}
+.media-content {
+  background: #fff;
+  z-index: 99;
 }
 </style>

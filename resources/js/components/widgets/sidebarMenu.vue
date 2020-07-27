@@ -24,7 +24,7 @@
           <li class="nav-item" v-if="this.$can('post-popular-access')">
             <router-link exact class="nav-link" :to="{ name: 'post.popular' }">
               <i class="far fa-circle nav-icon"></i>
-              <p>Bài viết nổi bật</p>
+              <p>Được quan tâm</p>
             </router-link>
           </li>
           <li class="nav-item">

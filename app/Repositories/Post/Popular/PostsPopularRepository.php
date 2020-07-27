@@ -21,7 +21,7 @@ class PostsPopularRepository extends EloquentRepository implements PostsPopularR
         return $this->_model->where('post_id',$post_id)->get();
     }
     public function index($request){
-        $rs = $this->_model->leftJoin('posts','posts_popular.post_id','posts.id')->select('posts.*','posts_popular.id')->orderByDesc('posts_popular.id');
+        $rs = $this->_model->leftJoin('posts','posts_popular.post_id','posts.id')->select('posts.*','posts.id as post_id','posts_popular.id')->orderByDesc('posts_popular.id');
         if($request->filled('post_id')){
             $rs->where('posts_popular.post_id',$request->get('post_id'));
         }

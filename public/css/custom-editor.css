@@ -16,6 +16,7 @@
 }
 
 .mce-top-part {
+  display: block;
   background-color: #fff;
 }
 

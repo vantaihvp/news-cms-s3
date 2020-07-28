@@ -525,6 +525,7 @@ export default {
         ],
       },
       edit_slug: false,
+      saved: false,
     };
   },
   methods: {
@@ -632,11 +633,12 @@ export default {
     },
     handleScroll: function (evt, el) {
       let mce = document.querySelector(".mce-top-part");
-      let media_content = document.querySelector(".media-content");
+      let media_content = document.querySelector(".btn-add-media");
       if (
         el.getBoundingClientRect().top <= 0 &&
-        document.querySelector(".end-tinymce").getBoundingClientRect().top > 300
+        document.querySelector(".end-tinymce").getBoundingClientRect().top > 200
       ) {
+        mce.style.display = "block";
         mce.style.position = "fixed";
         mce.style.top = "25px";
         mce.style.width = this.getMceOffest().width - 2 + "px";
@@ -644,6 +646,11 @@ export default {
         media_content.style.top = "0px";
         media_content.style.width = this.getMceOffest().width - 2 + "px";
         document.querySelector(".group-content").classList.add("fixed");
+      } else if (
+        document.querySelector(".end-tinymce").getBoundingClientRect().top <=
+        200
+      ) {
+        mce.style.display = "none";
       } else {
         mce.style.position = "inherit";
         media_content.style.position = "inherit";
@@ -683,6 +690,7 @@ export default {
           this.errors = error.response.data.errors;
           this.$toastr.error(list_error, "Lỗi");
         });
+      this.saved = true;
     },
     editSlug() {
       this.edit_slug = !this.edit_slug;
@@ -706,9 +714,23 @@ export default {
         });
     },
   },
-  created() {
+  mounted() {
     this.getData();
     this.getTaxonomy();
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.saved) {
+      const answer = window.confirm(
+        "--- Thông báo là bài viết chưa được lưu ---\nCó không giữ mất đừng tìm! Ok để rời đi"
+      );
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    } else {
+      next();
+    }
   },
 };
 </script>
@@ -764,7 +786,9 @@ export default {
   background-color: #fff;
 }
 .media-content {
-  background: #fff;
-  z-index: 99;
+  .btn-add-media {
+    background: #fff;
+    z-index: 99;
+  }
 }
 </style>

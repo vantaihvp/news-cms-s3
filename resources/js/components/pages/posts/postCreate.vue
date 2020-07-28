@@ -454,6 +454,7 @@ export default {
       isLoadingRelated: false,
       errors: [],
       value: null,
+      saved: false,
       momentFormat: {
         // Date to String
         stringify: (date) => {
@@ -563,10 +564,11 @@ export default {
           this.errors = error.response.data.errors;
           this.$toastr.error(list_error, "Lỗi");
         });
+      this.saved = true;
     },
     handleScroll: function (evt, el) {
       let mce = document.querySelector(".mce-top-part");
-      let media_content = document.querySelector(".media-content");
+      let media_content = document.querySelector(".btn-add-media");
       if (
         el.getBoundingClientRect().top <= 0 &&
         document.querySelector(".end-tinymce").getBoundingClientRect().top > 300
@@ -593,6 +595,20 @@ export default {
   },
   created() {
     this.getTaxonomy();
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.saved) {
+      const answer = window.confirm(
+        "--- Thông báo là bài viết chưa được lưu ---\nCó không giữ mất đừng tìm! Ok để rời đi"
+      );
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    } else {
+      next();
+    }
   },
 };
 </script>
@@ -648,7 +664,9 @@ export default {
   }
 }
 .media-content {
-  background: #fff;
-  z-index: 999;
+  .btn-add-media {
+    background: #fff;
+    z-index: 99;
+  }
 }
 </style>

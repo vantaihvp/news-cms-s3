@@ -7,7 +7,7 @@
       data-accordion="false"
     >
       <li class="nav-item has-treeview" @click="toggleMenu">
-        <a href="#" class="nav-link">
+        <a href="#" class="nav-link d-block">
           <i class="fa fa-edit"></i>
           <p>
             Bài viết

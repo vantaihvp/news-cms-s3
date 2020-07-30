@@ -25,7 +25,14 @@
               <tbody>
                 <tr>
                   <td scope="col">
-                    <input class="post-id" type="checkbox" name="post_id" value="0" />
+                    <input
+                      class="post-id"
+                      type="checkbox"
+                      name="post_id"
+                      value="0"
+                      v-model="id_check"
+                      @change="checkPost($event)"
+                    />
                   </td>
                   <td scope="col">{{post_main.title }} (*)</td>
                   <td scope="col">{{ post_main.user_id }}</td>
@@ -34,7 +41,14 @@
                 </tr>
                 <tr v-for="post in posts_revision" :key="post.id">
                   <td scope="col">
-                    <input class="post-id" type="checkbox" name="post_id" v-bind:value="post.id" />
+                    <input
+                      class="post-id"
+                      type="checkbox"
+                      name="post_id"
+                      v-bind:value="post.id"
+                      v-model="id_check"
+                      @change="checkPost($event)"
+                    />
                   </td>
                   <td scope="col">{{ post.title }}</td>
                   <td scope="col">{{ post.user_id }}</td>
@@ -67,16 +81,46 @@
             </tbody>
           </table>
         </div>
+        <h3>Tóm tắt</h3>
+        <div class="table-2">
+          <table class="table table-borderless table-compare">
+            <tbody>
+              <tr>
+                <td class="after">
+                  <div style="width:700px" class="excerpt-post-compare excerpt-after"></div>
+                </td>
+                <td class="before">
+                  <div style="width:700px" class="excerpt-post-compare excerpt-before"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Trạng thái</h3>
+        <div class="table-2">
+          <table class="table table-borderless table-compare">
+            <tbody>
+              <tr>
+                <td class="after">
+                  <div style="width:700px" class="status-post-compare status-after"></div>
+                </td>
+                <td class="before">
+                  <div style="width:700px" class="status-post-compare status-before"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <h3>Nội dung</h3>
         <div class="table-2">
           <table class="table table-borderless">
             <tbody>
               <tr>
                 <td>
-                  <div style="width:700px" v-html="post_after.description"></div>
+                  <div style="width:700px" class="description-post-compare description-after"></div>
                 </td>
                 <td>
-                  <div style="width:700px" v-html="post_before.description"></div>
+                  <div style="width:700px" class="description-post-compare description-before"></div>
                 </td>
               </tr>
             </tbody>
@@ -101,6 +145,7 @@ export default {
   data() {
     return {
       ids: {},
+      id_check: [],
       post_main: {},
       posts_revision: {},
       post_before: {},
@@ -142,42 +187,98 @@ export default {
       axios
         .get("/auth/revision", { params: dataForm })
         .then((response) => {
-          // console.log(response);
+          let diff_title = "",
+            diff_excerpt = "",
+            diff_status = "",
+            diff_description = "";
           // compare
           if (response.data.length == 2) {
-            this.post_after = response.data[0];
-            this.post_before = response.data[1];
-            let diff_title = this.diff(
+            diff_title = this.diff(
               response.data[1].title,
               response.data[0].title
             );
-            document.querySelectorAll(".title-post-compare").innerHTML = "";
-            document
-              .querySelector(".title-before")
-              .appendChild(diff_title.before);
-            document
-              .querySelector(".title-after")
-              .appendChild(diff_title.after);
+            // excerpt-post-compare
+            diff_excerpt = this.diff(
+              response.data[1].excerpt,
+              response.data[0].excerpt
+            );
+            // status-post-compare
+            diff_status = this.diff(
+              response.data[1].status,
+              response.data[0].status
+            );
+            // description-post-compare
+            diff_description = this.diff(
+              response.data[1].description,
+              response.data[0].description
+            );
           } else {
             Object.assign(this.post_after, this.post_main);
-            //this.post_after = this.post_main;
             this.post_before = response.data[0];
-            let diff_title = this.diff(
+            //
+            diff_title = this.diff(
               response.data[0].title,
               this.post_after.title
             );
-            document.querySelector(".title-post-compare").innerHTML = "";
-            document
-              .querySelector(".title-before")
-              .appendChild(diff_title.before);
-            document
-              .querySelector(".title-after")
-              .appendChild(diff_title.after);
+            // excerpt-post-compare
+            diff_excerpt = this.diff(
+              response.data[0].excerpt,
+              this.post_after.excerpt
+            );
+            // status-post-compare
+            diff_status = this.diff(
+              response.data[0].status,
+              this.post_after.status
+            );
+            // description-post-compare
+            diff_description = this.diff(
+              response.data[0].description,
+              this.post_after.description
+            );
           }
+          // title-post-compare show
+          this.diffShow(
+            ".title-before",
+            ".title-after",
+            diff_title.before,
+            diff_title.after
+          );
+          // excerpt-post-compare show
+          this.diffShow(
+            ".excerpt-before",
+            ".excerpt-after",
+            diff_excerpt.before,
+            diff_excerpt.after
+          );
+          // status-post-compare show
+          this.diffShow(
+            ".status-before",
+            ".status-after",
+            diff_status.before,
+            diff_status.after
+          );
+          // description-post-compare show
+          this.diffShow(
+            ".description-before",
+            ".description-after",
+            diff_description.before,
+            diff_description.after
+          );
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    checkPost(e) {
+      // if (this.id_check.length == 2) {
+      //   document
+      //     .querySelectorAll('input[type="checkbox"]:not(:checked)')
+      //     .setAttribute("disabled", "true");
+      // } else {
+      //   document
+      //     .querySelectorAll('input[type="checkbox"]:not(:checked)')
+      //     .setAttribute("disabled", "false");
+      // }
     },
     submitRevisionForm(e) {
       let ids = [];
@@ -203,11 +304,13 @@ export default {
         span1 = document.createElement("span");
         span2 = document.createElement("span");
         if (part.removed) {
-          span1.style.color = "green";
+          span1.style.color = "orange";
+          span1.style.fontWeight = "bold";
           span1.appendChild(document.createTextNode(part.value));
           fragment.appendChild(span1);
         } else if (part.added) {
           span2.style.color = "red";
+          span2.style.fontWeight = "bold";
           span2.appendChild(document.createTextNode(part.value));
           fragment2.appendChild(span2);
         } else {
@@ -220,6 +323,12 @@ export default {
       result.before = fragment;
       result.after = fragment2;
       return result;
+    },
+    diffShow(classBefore, classAfter, dataBefore, dataAfter) {
+      document.querySelector(classBefore).innerHTML = "";
+      document.querySelector(classAfter).innerHTML = "";
+      document.querySelector(classBefore).appendChild(dataBefore);
+      document.querySelector(classAfter).appendChild(dataAfter);
     },
   },
   created() {

@@ -21,6 +21,7 @@
                 <th scope="col">Tác giả</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Date</th>
+                <th scope="col">Hành động</th>
               </thead>
               <tbody>
                 <tr>
@@ -38,6 +39,7 @@
                   <td scope="col">{{ post_main.user_id }}</td>
                   <td scope="col">{{ post_main.status }}</td>
                   <td scope="col">{{ post_main.date }}</td>
+                  <td scope="col"></td>
                 </tr>
                 <tr v-for="post in posts_revision" :key="post.id">
                   <td scope="col">
@@ -54,6 +56,9 @@
                   <td scope="col">{{ post.user_id }}</td>
                   <td scope="col">{{ post.status }}</td>
                   <td scope="col">{{ post.date }}</td>
+                  <td scope="col">
+                    <button class="btn btn-primary" type="button" @click="restore(post)">Khôi phục</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -65,66 +70,73 @@
       </div>
     </div>
     <div class="card border-0 shadow-none" style="overflow: auto;">
-      <div class="card-body" id="card-compare" style="width: 1400px">
-        <h3>Tiêu đề</h3>
-        <div class="table-2">
-          <table class="table table-borderless table-compare">
-            <tbody>
-              <tr>
-                <td class="after">
-                  <div style="width:700px" class="title-post-compare title-after"></div>
-                </td>
-                <td class="before">
-                  <div style="width:700px" class="title-post-compare title-before"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="card-body" id="card-compare">
+        <div class="block-title">
+          <h3>Tiêu đề</h3>
+          <hr />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="after">
+                <div class="title-post-compare title-after"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="before">
+                <div class="title-post-compare title-before"></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <h3>Tóm tắt</h3>
-        <div class="table-2">
-          <table class="table table-borderless table-compare">
-            <tbody>
-              <tr>
-                <td class="after">
-                  <div style="width:700px" class="excerpt-post-compare excerpt-after"></div>
-                </td>
-                <td class="before">
-                  <div style="width:700px" class="excerpt-post-compare excerpt-before"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <hr />
+        <div class="block-excerpt">
+          <h3>Tóm tắt</h3>
+          <hr />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="after">
+                <div class="excerpt-post-compare excerpt-after"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="before">
+                <div class="excerpt-post-compare excerpt-before"></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <h3>Trạng thái</h3>
-        <div class="table-2">
-          <table class="table table-borderless table-compare">
-            <tbody>
-              <tr>
-                <td class="after">
-                  <div style="width:700px" class="status-post-compare status-after"></div>
-                </td>
-                <td class="before">
-                  <div style="width:700px" class="status-post-compare status-before"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <hr />
+        <div class="block-status">
+          <h3>Trạng thái</h3>
+          <hr />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="after">
+                <div class="status-post-compare status-after"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="before">
+                <div class="status-post-compare status-before"></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <h3>Nội dung</h3>
-        <div class="table-2">
-          <table class="table table-borderless">
-            <tbody>
-              <tr>
-                <td>
-                  <div style="width:700px" class="description-post-compare description-after"></div>
-                </td>
-                <td>
-                  <div style="width:700px" class="description-post-compare description-before"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <hr />
+        <div class="block-description">
+          <h3>Nội dung</h3>
+          <hr />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="after">
+                <div class="description-post-compare description-after"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="before">
+                <div class="description-post-compare description-before"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -329,6 +341,25 @@ export default {
       document.querySelector(classAfter).innerHTML = "";
       document.querySelector(classBefore).appendChild(dataBefore);
       document.querySelector(classAfter).appendChild(dataAfter);
+    },
+    restore(post) {
+      let dataForm = post;
+      axios
+        .put("auth/posts/restore-revision/" + post.id, dataForm)
+        .then((rs) => {
+          let post_id = rs.data.success.id;
+          this.$toastr.success("Thành công", "Khôi phục thành công");
+          this.getPostsRevision(this.id);
+          this.getPost(this.id);
+        })
+        .catch((error) => {
+          let list_error = "";
+          Object.values(error.response.data.errors).forEach(
+            (e) => (list_error += `<li>${e}</li>`)
+          );
+          this.errors = error.response.data.errors;
+          this.$toastr.error(list_error, "Lỗi");
+        });
     },
   },
   created() {

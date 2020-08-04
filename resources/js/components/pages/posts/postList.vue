@@ -215,7 +215,7 @@ var moment = require("moment");
 export default {
   props: {
     message: String,
-    status: ""
+    status: "",
   },
   data() {
     return {
@@ -229,7 +229,7 @@ export default {
         { text: "Trả bài", value: "return" },
         { text: "Đã duyệt", value: "approved" },
         { text: "Riêng tư", value: "private" },
-        { text: "Đã xóa", value: "deleted" }
+        { text: "Đã xóa", value: "deleted" },
       ],
       post_format: 0,
       post_status: 0,
@@ -242,18 +242,18 @@ export default {
       categoriesOptions: [],
       searchText: "",
       error: {
-        message: ""
+        message: "",
       },
       momentFormat: {
         // Date to String
-        stringify: date => {
+        stringify: (date) => {
           return date ? moment(date).format("DD/MM/YYYY") : "";
         },
         // String to Date
-        parse: value => {
+        parse: (value) => {
           return value ? moment(value, "DD/MM/YYYY").toDate() : null;
-        }
-      }
+        },
+      },
     };
   },
   created() {
@@ -274,7 +274,7 @@ export default {
       let paramsData = {};
       let authorsID = [];
       let dateTime = {};
-      this.selectedAuthors.forEach(e => {
+      this.selectedAuthors.forEach((e) => {
         authorsID.push(e.id);
       });
       if (typeof page === "undefined") {
@@ -302,12 +302,12 @@ export default {
       }
       if (this.selectedCategories.length) {
         let categories = [];
-        this.selectedCategories.forEach(e => {
+        this.selectedCategories.forEach((e) => {
           categories.push(e.id);
         });
         paramsData.categories = categories;
       }
-      axios.get("auth/posts", { params: paramsData }).then(data => {
+      axios.get("auth/posts", { params: paramsData }).then((data) => {
         this.posts = data.data.success;
       });
     },
@@ -316,11 +316,11 @@ export default {
       if (result) {
         axios
           .delete("/auth/posts/" + id)
-          .then(rs => {
+          .then((rs) => {
             toastr.success("Thành công", "Xóa thành công");
             this.getData(1);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       }
@@ -328,16 +328,16 @@ export default {
     restorePost(id) {
       var result = confirm("Bán muốn khôi phục bài viết này?");
       let data = {
-        id: id
+        id: id,
       };
       if (result) {
         axios
           .post("/auth/posts/restore/", data)
-          .then(rs => {
+          .then((rs) => {
             toastr.success("Thành công", "Khôi phục thành công");
             this.getData(1);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       }
@@ -348,7 +348,7 @@ export default {
         let paramsData = {};
         paramsData["s"] = query;
         paramsData["per_page"] = 100;
-        axios.get("auth/users", { params: paramsData }).then(response => {
+        axios.get("auth/users", { params: paramsData }).then((response) => {
           this.authorOptions = response.data.success.data;
           this.isLoadingAuthor = false;
         });
@@ -362,17 +362,18 @@ export default {
         paramsData.sort = 0;
         axios
           .get("auth/categories/get-categories", { params: paramsData })
-          .then(response => {
+          .then((response) => {
             this.categoriesOptions = response.data.success;
             this.isLoadingCategory = false;
           });
       }
     },
     is_edit_post(post) {
-      if (post.status == "publish") {
+      if (post.status == "Đã xuất bản") {
         if (this.$can("publish-post-edit")) {
           return true;
         }
+        return false;
       } else if (this.$can("other-post-edit")) {
         return true;
       } else if (
@@ -397,8 +398,8 @@ export default {
         return true;
       }
       return false;
-    }
-  }
+    },
+  },
 };
 </script>
 

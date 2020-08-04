@@ -71,6 +71,9 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
             if(!$user->can('other-post-list')){
                 $rs->where('user_id',$user->id);
             }
+            if(!$user->can('view-post-approved')){
+                $rs->where('status','<>','approved');
+            }
         }else{
             $rs->where('status','publish');
         }

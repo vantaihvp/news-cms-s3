@@ -42,6 +42,7 @@ Route::prefix('auth')->group(function () {
         Route::resource('roles','RoleController');
         Route::get('permissions','RoleController@getAllPermissions');
         //Post
+        Route::put('posts/restore-revision/{id}','API\PostController@restoreRevision');
         Route::resource('posts-popular', 'API\PostsPopularController');
         Route::post('posts/get-slug/','API\PostController@getSlug');
         Route::post('posts/import','API\PostController@store_api');

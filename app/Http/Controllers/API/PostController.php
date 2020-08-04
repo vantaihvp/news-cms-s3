@@ -209,7 +209,7 @@ class PostController extends Controller
         ]);
         DB::beginTransaction();
         try {
-            //Tạo bảng sao lưu
+            //Tạo bảng sao lưu            
             $post_old = $this->postRepository->find($id)->toArray();
             $post_old['post_id'] = $post_old['id'];
             unset($post_old['id']);
@@ -265,6 +265,33 @@ class PostController extends Controller
         }
     }
 
+    public function restoreRevision(Request $request,$id){
+        $this->validate($request, [ 'title' => 'required' ]);
+        DB::beginTransaction();
+        try {
+            //Tạo bảng sao lưu
+            $post_old = $this->postRevision->find($id);
+            $post_current = $this->postRepository->find($post_old->post_id)->toArray();
+            unset($post_current['id']);
+            $post_current['post_id'] = $post_old->post_id;
+            $post_revision = $this->postRevision->create($post_current)->toArray();
+            //End Tạo bảng sao lưu
+            $user = \Auth::user();
+            $attributes = $request->all();
+            unset($post_old['id']);
+            $data = $this->postRepository->update($post_old->post_id,$post_old->toArray());
+            if($data){
+                DB::commit();
+                return response()->json(['success'=>$data]);
+            }
+            DB::rollback();
+            return response()->json(['error'=>'Lỗi']);
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollback();
+            return response()->json(['error'=>$th]);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *

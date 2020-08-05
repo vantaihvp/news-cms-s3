@@ -194,7 +194,7 @@
                 </td>
                 <td scope="col">{{post.categories_name}}</td>
                 <td scope="col">{{post.user_name}}</td>
-                <td scope="col">{{post.status}}</td>
+                <td scope="col" v-html="getStatus(post.status)"></td>
                 <td scope="col">{{post.date}}</td>
               </tr>
             </tbody>
@@ -368,8 +368,30 @@ export default {
           });
       }
     },
+    getStatus(status) {
+      switch (status) {
+        case "draft":
+          return '<span class="badge badge-primary">Bản nháp</span>';
+          break;
+        case "pending":
+          return '<span class="badge badge-warning">Chờ duyệt</span>';
+          break;
+        case "private":
+          return '<span class="badge badge-dark">Riêng tư</span>';
+          break;
+        case "return":
+          return '<span class="badge badge-danger">Trả bài</span>';
+          break;
+        case "approved":
+          return '<span class="badge badge-info">Đã duyệt</span>';
+          break;
+        case "publish":
+          return '<span class="badge badge-success">Đã xuất bản</span>';
+          break;
+      }
+    },
     is_edit_post(post) {
-      if (post.status == "Đã xuất bản") {
+      if (post.status == "publish") {
         if (this.$can("publish-post-edit")) {
           return true;
         }
@@ -434,6 +456,9 @@ export default {
           .row-actions {
             display: block;
           }
+        }
+        .badge {
+          font-size: 12px;
         }
       }
     }

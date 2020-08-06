@@ -488,7 +488,7 @@ export default {
       let tagImg = `<img src="${photo.url}" data-mce-src="${photo.url}" style="max-width:100%"/>`;
       let caption = "";
       if (photo.caption != null) {
-        caption = `<p class="wp-caption-text aligncenter">${photo.caption}</p>`;
+        caption = `<p class="wp-caption-text aligncenter">${photo.caption}</p><p>&nbsp;</p>`;
       }
       this.$refs.tm.editor.insertContent(tagImg + caption);
     },

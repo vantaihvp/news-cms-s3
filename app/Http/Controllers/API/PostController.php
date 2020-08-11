@@ -36,7 +36,7 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $rs = $this->postRepository->getWithPaginate($request);
+        $rs = $this->postRepository->index($request);
         foreach ($rs as $key => $item) {
             $item->date = Carbon::parse($item->date)->format('d/m/Y H:i:s');
         }
@@ -308,5 +308,8 @@ class PostController extends Controller
             return response()->json(['success'=>$data]);
         }
         return response()->json(['error'=>$data]);
+    }
+    public function setUserEditing(Request $request){
+        return $this->postRepository->update($request->id,['user_editing'=>$request->user_editing]);
     }
 }

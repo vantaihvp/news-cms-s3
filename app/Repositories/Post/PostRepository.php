@@ -18,7 +18,7 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
     {
         return \App\Models\Posts::class;
     }
-    public function getWithPaginate($attributes){
+    public function index($attributes){
         $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7')->toDateTimeString();
         // return $dt;
         $user = \Auth::user();
@@ -109,6 +109,9 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
         }
         foreach ($rs as $key => $post) {
             $post['user_name'] = User::find($post->user_id)->name;
+            if($post->user_editing){
+                $post['editing_name'] = User::find($post->user_editing)->name;
+            }
             if($post->categories_id){
                 $categories_arr = array();
                 $categories = json_decode($post->categories_id);

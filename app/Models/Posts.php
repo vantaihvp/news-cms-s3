@@ -31,5 +31,6 @@ class Posts extends Model
         'role_id',
         'description',
         'user_id',
+        'user_editing',
     ];
 }

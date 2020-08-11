@@ -129,7 +129,7 @@
         <div class="float-left">
           <h3 class="card-title">
             <i class="fas fa-edit"></i>
-            Danh sách bài viết ({{posts.total}})
+            Danh sách bài viết ({{ posts.total }})
           </h3>
         </div>
         <div class="card-tools">
@@ -167,16 +167,20 @@
                   </div>
                 </td>
                 <td scope="col">
-                  {{ post.title }}
-                  <div class="row-actions" v-if="post.deleted_at==null">
+                  <p
+                    class="editing badge badge-warning"
+                    v-if="post.user_editing"
+                  >{{ post.editing_name }} - Đang biên tập</p>
+                  <p class="title">{{ post.title }}</p>
+                  <div class="row-actions" v-if="post && showAction(post)">
                     <span class="edit">
                       <router-link
-                        :to="{ name: 'post-edit', params: { id: post.id } }"
+                        :to="{name: 'post-edit',params: { id: post.id }}"
                         v-if="is_edit_post(post)"
                       >Chỉnh sửa</router-link>
                     </span>
                     <span class="revision">
-                      <router-link :to="{ name: 'post.revision', params: { id: post.id } }">Lịch sử</router-link>
+                      <router-link :to="{ name: 'post.revision', params: { id: post.id }}">Lịch sử</router-link>
                     </span>
                     <span class="delete">
                       <button
@@ -192,10 +196,10 @@
                     </span>
                   </div>
                 </td>
-                <td scope="col">{{post.categories_name}}</td>
-                <td scope="col">{{post.user_name}}</td>
+                <td scope="col">{{ post.categories_name }}</td>
+                <td scope="col">{{ post.user_name }}</td>
                 <td scope="col" v-html="getStatus(post.status)"></td>
-                <td scope="col">{{post.date}}</td>
+                <td scope="col">{{ post.date }}</td>
               </tr>
             </tbody>
           </table>
@@ -361,7 +365,9 @@ export default {
         paramsData.s = query;
         paramsData.sort = 0;
         axios
-          .get("auth/categories/get-categories", { params: paramsData })
+          .get("auth/categories/get-categories", {
+            params: paramsData,
+          })
           .then((response) => {
             this.categoriesOptions = response.data.success;
             this.isLoadingCategory = false;
@@ -421,6 +427,15 @@ export default {
       }
       return false;
     },
+    showAction(post) {
+      if (post.user_editing == null) {
+        return true;
+      }
+      if (post.user_editing == this.$auth.user().user.id) {
+        return true;
+      }
+      return false;
+    },
   },
 };
 </script>
@@ -449,6 +464,14 @@ export default {
     }
     .table-data {
       tr {
+        .editing {
+          margin-bottom: 0px;
+        }
+        .title {
+          margin-bottom: 0px;
+          font-size: 14px;
+          font-weight: bold;
+        }
         .col-img {
           width: 70px;
         }

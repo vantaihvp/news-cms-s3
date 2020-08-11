@@ -149,10 +149,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_0.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 0,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{active: post.layout_name == 0,'img-thumbnail': true}"
                   data-id="0"
                   @click="setPostLayout"
                 />
@@ -160,10 +157,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_1.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 1,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{active: post.layout_name == 1, 'img-thumbnail': true }"
                   data-id="1"
                   @click="setPostLayout"
                 />
@@ -171,10 +165,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_2.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 2,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{ active: post.layout_name == 2, 'img-thumbnail': true }"
                   data-id="2"
                   @click="setPostLayout"
                 />
@@ -182,10 +173,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_3.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 3,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{ active: post.layout_name == 3, 'img-thumbnail': true }"
                   data-id="3"
                   @click="setPostLayout"
                 />
@@ -350,7 +338,9 @@
               <li
                 v-for="category in categories"
                 :key="category.id"
-                v-bind:class="[category.parent_id ? 'child' : 'parent' ]"
+                v-bind:class="[
+                                    category.parent_id ? 'child' : 'parent'
+                                ]"
               >
                 <div class="form-check icheck-primary">
                   <label class="form-check-label">
@@ -526,6 +516,7 @@ export default {
       },
       edit_slug: false,
       saved: false,
+      editing: true,
     };
   },
   methods: {
@@ -543,24 +534,23 @@ export default {
     getData() {
       axios
         .get("/auth/posts/" + this.id + "/edit")
-        .then((response) => {
-          if (response.data.success) {
-            this.post = response.data.success;
-            this.post.date = new Date(response.data.success.date);
+        .then((rs) => {
+          if (rs.data.success) {
+            this.post = rs.data.success;
+            this.post.date = new Date(rs.data.success.date);
             this.selectedCategories = JSON.parse(this.post.categories_id);
-            this.seoObj = response.data.success.seoObj;
+            this.seoObj = rs.data.success.seoObj;
             this.getRelatedPosts();
             this.getTagsPost();
+            this.isUserEditing();
           } else {
-            this.$toastr.error("Lỗi", response.data.errors);
+            this.$toastr.error("Lỗi", rs.data.errors);
             this.$router.push({
               path: "/admin/posts",
             });
           }
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     },
     getRelatedPosts() {
       if (this.post.related_posts) {
@@ -691,6 +681,7 @@ export default {
           this.$toastr.error(list_error, "Lỗi");
         });
       this.saved = true;
+      this.editing = false;
     },
     editSlug() {
       this.edit_slug = !this.edit_slug;
@@ -713,17 +704,56 @@ export default {
           console.log(error);
         });
     },
+    preventNav(event) {
+      event.preventDefault();
+      if (!this.editing) {
+        this.updateUserEditing();
+      }
+      event.returnValue = "";
+    },
+    updateUserEditing(user_editing = "") {
+      let dataForm = {
+        id: this.id,
+        user_editing: user_editing,
+      };
+      axios
+        .post("auth/posts/user-editing", dataForm)
+        .then((rs) => {
+          // console.log(rs);
+        })
+        .catch((error) => {
+          // console.log(error);
+        });
+    },
+    isUserEditing() {
+      if (
+        this.post.user_editing &&
+        this.$auth.user().user.id != this.post.user_editing
+      ) {
+        this.$toastr.error(
+          "Lỗi",
+          "Có người đang chỉnh sửa bài này! Bạn vui lòng quay lại sau"
+        );
+        this.editing = false;
+        this.$router.push({
+          path: "/admin/posts",
+        });
+      } else {
+        this.updateUserEditing(this.$auth.user().user.id);
+      }
+    },
   },
   mounted() {
     this.getData();
     this.getTaxonomy();
   },
   beforeRouteLeave(to, from, next) {
-    if (!this.saved) {
+    if (!this.saved && this.editing) {
       const answer = window.confirm(
         "--- Thông báo là bài viết chưa được lưu ---\nCó không giữ mất đừng tìm! Ok để rời đi"
       );
       if (answer) {
+        this.updateUserEditing();
         next();
       } else {
         next(false);
@@ -731,6 +761,12 @@ export default {
     } else {
       next();
     }
+  },
+  beforeMount() {
+    window.addEventListener("beforeunload", this.preventNav);
+    this.$once("hook:beforeDestroy", () => {
+      window.removeEventListener("beforeunload", this.preventNav);
+    });
   },
 };
 </script>

@@ -49,6 +49,7 @@ Route::prefix('auth')->group(function () {
         Route::post('posts/set-popular','API\PostController@setPopular');
         Route::post('posts/restore','API\PostController@restore');
         Route::get('posts/revision/{id}','API\PostRevisionController@getByPostId');
+        Route::post('posts/user-editing/','API\PostController@setUserEditing');
         //End post
         //Post Revision
         Route::resource('revision', 'API\PostRevisionController');

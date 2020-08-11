@@ -78,27 +78,26 @@
 <script>
 export default {
   methods: {
-    logout: function() {
+    logout: function () {
       axios
         .post("/auth/logout")
-        .then(response => {
+        .then((response) => {
           if (response.data.status === "success") {
             document.location.href = "/login";
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.status === 302 || 401) {
             document.location.href = "/login";
           } else {
             // throw error and go to catch block
           }
         });
-    }
+    },
   },
   created() {
     window.Permissions = this.$auth.user().permissions;
-    console.log("quyền User Login: " + this.$auth.user().permissions);
-  }
+  },
 };
 </script>
 

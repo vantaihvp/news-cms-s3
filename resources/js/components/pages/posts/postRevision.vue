@@ -36,7 +36,7 @@
                     />
                   </td>
                   <td scope="col">{{post_main.title }} (*)</td>
-                  <td scope="col">{{ post_main.user_id }}</td>
+                  <td scope="col">{{ post_main.user_name }}</td>
                   <td scope="col">{{ post_main.status }}</td>
                   <td scope="col">{{ post_main.date }}</td>
                   <td scope="col"></td>
@@ -53,7 +53,7 @@
                     />
                   </td>
                   <td scope="col">{{ post.title }}</td>
-                  <td scope="col">{{ post.user_id }}</td>
+                  <td scope="col">{{ post.user_name }}</td>
                   <td scope="col">{{ post.status }}</td>
                   <td scope="col">{{ post.date }}</td>
                   <td scope="col">
@@ -303,15 +303,26 @@ export default {
       this.getPostsCompare(ids.toString());
     },
     diff(before, after) {
-      var diff = jsdiff.diffWords(before, after);
-      var result = {
-        before: "",
-        after: "",
-      };
       var fragment = document.createDocumentFragment(),
         fragment2 = document.createDocumentFragment();
       var span1 = null,
         span2 = null;
+      var result = {
+        before: "",
+        after: "",
+      };
+      if (before == null || after == null) {
+        span1 = document.createElement("span");
+        span2 = document.createElement("span");
+        span1.appendChild(document.createTextNode(after));
+        fragment.appendChild(span1);
+        span2.appendChild(document.createTextNode(before));
+        fragment2.appendChild(span2);
+        result.before = fragment;
+        result.after = fragment2;
+        return result;
+      }
+      var diff = jsdiff.diffWords(before, after);
       diff.forEach(function (part) {
         span1 = document.createElement("span");
         span2 = document.createElement("span");

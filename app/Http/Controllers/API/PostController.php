@@ -11,6 +11,7 @@ use App\Repositories\Post\Category\CategoryRepositoryInterface;
 use App\Repositories\Photo\PhotoRepositoryInterface;
 use App\Repositories\Seo\SeoRepositoryInterface;
 use App\Repositories\Post\Revision\PostRevisionRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
 class PostController extends Controller
 {
     protected $postRepository;
@@ -18,16 +19,19 @@ class PostController extends Controller
     protected $categoryRepository;
     protected $photoRepository;
     protected $seoRepository;
+    protected $userRepo;
     public function __construct(PostRepositoryInterface $postRepository,
                                 PostRevisionRepositoryInterface $postRevision,
                                 CategoryRepositoryInterface $categoryRepository,
                                 PhotoRepositoryInterface $photoRepository,
+                                UserRepositoryInterface $userRepo,
                                 SeoRepositoryInterface $seoRepository){
         $this->postRepository = $postRepository;
         $this->postRevision = $postRevision;
         $this->categoryRepository = $categoryRepository;
         $this->photoRepository = $photoRepository;
         $this->seoRepository = $seoRepository;
+        $this->userRepo = $userRepo;
     }
     /**
      * Display a listing of the resource.
@@ -138,6 +142,7 @@ class PostController extends Controller
     public function show($id)
     {
         $data = $this->postRepository->find($id);
+        $data->user_name = $this->userRepo->find($data->user_id)->name;
         if($data){
             if($data->thumbnail_id){
                 $data['thumbnail_url'] = $this->photoRepository->find($data->thumbnail_id)['url'];
@@ -227,7 +232,8 @@ class PostController extends Controller
                 $this->seoRepository->update($seo_id,$data_seo);
             }else{
                 $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
-            }        
+            }
+            $attributes['user_id'] = $user->id;
             $data = $this->postRepository->update($id,$attributes);
             if($data){
                 DB::commit();

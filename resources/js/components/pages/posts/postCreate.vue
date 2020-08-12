@@ -40,7 +40,7 @@
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="form-group group-content" v-scroll="handleScroll">
+                <div class="form-group group-content">
                   <label>Nội dung</label>
                   <MediaContent ref="mediacontent" @insertMedia="insertMedia($event)" />
                   <tinymce
@@ -107,10 +107,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_0.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 0,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{active: post.layout_name == 0,'img-thumbnail': true}"
                   data-id="0"
                   @click="setPostLayout"
                 />
@@ -118,10 +115,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_1.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 1,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{active: post.layout_name == 1,'img-thumbnail': true }"
                   data-id="1"
                   @click="setPostLayout"
                 />
@@ -129,10 +123,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_2.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 2,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{active: post.layout_name == 2,'img-thumbnail': true}"
                   data-id="2"
                   @click="setPostLayout"
                 />
@@ -140,10 +131,7 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_3.png"
-                  v-bind:class="{
-                                        active: post.layout_name == 3,
-                                        'img-thumbnail': true
-                                    }"
+                  v-bind:class="{active: post.layout_name == 3,'img-thumbnail': true}"
                   data-id="3"
                   @click="setPostLayout"
                 />
@@ -570,7 +558,8 @@ export default {
       let mce = document.querySelector(".mce-top-part");
       let media_content = document.querySelector(".btn-add-media");
       if (
-        el.getBoundingClientRect().top <= 0 &&
+        document.querySelector(".group-content").getBoundingClientRect().top <=
+          0 &&
         document.querySelector(".end-tinymce").getBoundingClientRect().top > 300
       ) {
         mce.style.position = "fixed";
@@ -594,7 +583,11 @@ export default {
     },
   },
   created() {
+    window.addEventListener("scroll", this.handleScroll);
     this.getTaxonomy();
+  },
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   beforeRouteLeave(to, from, next) {
     if (!this.saved) {

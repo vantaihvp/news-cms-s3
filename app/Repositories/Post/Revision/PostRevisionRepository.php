@@ -34,6 +34,9 @@ class PostRevisionRepository extends EloquentRepository implements PostRevisionR
         }else{
             $rs = $rs->get();
         }
+        foreach ($rs as $key => $value) {
+             $value['user_name'] = User::find($value->user_id)->name;
+        }
         return $rs;
     }
 }

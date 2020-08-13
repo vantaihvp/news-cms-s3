@@ -314,9 +314,13 @@ export default {
       if (before == null || after == null) {
         span1 = document.createElement("span");
         span2 = document.createElement("span");
-        span1.appendChild(document.createTextNode(after));
+        if (before != null) {
+          span1.appendChild(document.createTextNode(before));
+        }
         fragment.appendChild(span1);
-        span2.appendChild(document.createTextNode(before));
+        if (after != null) {
+          span2.appendChild(document.createTextNode(after));
+        }
         fragment2.appendChild(span2);
         result.before = fragment;
         result.after = fragment2;

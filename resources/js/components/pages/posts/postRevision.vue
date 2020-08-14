@@ -36,7 +36,7 @@
                     />
                   </td>
                   <td scope="col">{{post_main.title }} (*)</td>
-                  <td scope="col">{{ post_main.user_name }}</td>
+                  <td scope="col">{{ post_main.user_edit_name }}</td>
                   <td scope="col">{{ post_main.status }}</td>
                   <td scope="col">{{ post_main.date }}</td>
                   <td scope="col"></td>

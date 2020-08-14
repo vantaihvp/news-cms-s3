@@ -150,6 +150,7 @@ class PostController extends Controller
             if($data->thumbnail_highlight){
                 $data['highlight_url'] = $this->photoRepository->find($data->thumbnail_highlight)['url'];
             }
+            $data['user_edit_name'] = $data->user_edit ? $this->userRepo->find($data->user_edit)->name : $this->userRepo->find($data->user_id)->name;
             return response()->json(['success'=>$data]);
         }
         return response()->json(['errors'=> ['Not found']]);
@@ -233,7 +234,7 @@ class PostController extends Controller
             }else{
                 $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
             }
-            $attributes['user_id'] = $user->id;
+            $attributes['user_edit'] = $user->id;
             $data = $this->postRepository->update($id,$attributes);
             if($data){
                 DB::commit();

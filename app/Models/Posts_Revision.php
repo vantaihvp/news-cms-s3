@@ -30,5 +30,6 @@ class Posts_Revision extends Model
         'role_id',
         'description',
         'user_id',
+        'user_edit',
     ];
 }

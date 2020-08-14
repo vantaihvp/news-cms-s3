@@ -671,6 +671,7 @@ export default {
         });
       this.saved = true;
       this.editing = false;
+      this.updateUserEditing();
     },
     editSlug() {
       this.edit_slug = !this.edit_slug;

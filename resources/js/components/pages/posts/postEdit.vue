@@ -85,12 +85,27 @@
                 <div class="form-group form-content group-content">
                   <label>Nội dung</label>
                   <MediaContent ref="mediacontent" @insertMedia="insertMedia($event)" />
-                  <tinymce
-                    id="d1"
-                    v-model="post.description"
-                    :other_options="tinymceOptions"
+                  <editor
+                    id="post-content"
                     ref="tm"
-                  ></tinymce>
+                    v-model="post.description"
+                    :init="{
+                        content_css:
+                            '/css/custom-editor.css',
+                        convert_urls: true,
+                        relative_urls: false,
+                        remove_script_host: false,
+                        toolbar2: 'embed_button',
+                        plugins: [
+                            'autolink lists link charmap print preview hr anchor pagebreak',
+                            'searchreplace wordcount visualblocks visualchars code fullscreen',
+                            'insertdatetime nonbreaking save table contextmenu directionality',
+                            'template paste textcolor colorpicker textpattern toc emoticons hr codesample embed_button autoresize'
+                        ],
+                        toolbar:
+                            'embed_button | undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent'
+                    }"
+                  />
                   <div class="end-tinymce"></div>
                 </div>
               </div>
@@ -149,7 +164,10 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_0.png"
-                  v-bind:class="{active: post.layout_name == 0,'img-thumbnail': true}"
+                  v-bind:class="{
+                                        active: post.layout_name == 0,
+                                        'img-thumbnail': true
+                                    }"
                   data-id="0"
                   @click="setPostLayout"
                 />
@@ -157,7 +175,10 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_1.png"
-                  v-bind:class="{active: post.layout_name == 1, 'img-thumbnail': true }"
+                  v-bind:class="{
+                                        active: post.layout_name == 1,
+                                        'img-thumbnail': true
+                                    }"
                   data-id="1"
                   @click="setPostLayout"
                 />
@@ -165,7 +186,10 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_2.png"
-                  v-bind:class="{ active: post.layout_name == 2, 'img-thumbnail': true }"
+                  v-bind:class="{
+                                        active: post.layout_name == 2,
+                                        'img-thumbnail': true
+                                    }"
                   data-id="2"
                   @click="setPostLayout"
                 />
@@ -173,7 +197,10 @@
               <li>
                 <img
                   src="/images/admin/single_templates/single_template_3.png"
-                  v-bind:class="{ active: post.layout_name == 3, 'img-thumbnail': true }"
+                  v-bind:class="{
+                                        active: post.layout_name == 3,
+                                        'img-thumbnail': true
+                                    }"
                   data-id="3"
                   @click="setPostLayout"
                 />
@@ -430,12 +457,15 @@
 import SearchEngineOptimize from "./../widgets/SearchEngineOptimize";
 var moment = require("moment");
 import MediaContent from "../widgets/MediaContent";
-import tinymce from "vue-tinymce-editor";
+import Editor from "@tinymce/tinymce-vue";
+import "tinymce/tinymce.min.js";
 import "../../../plugins/tinymce/embed_button";
+
 export default {
   components: {
     SearchEngineOptimize,
     MediaContent,
+    editor: Editor,
   },
   props: {
     id: {
@@ -488,19 +518,6 @@ export default {
         parse: (value) => {
           return value ? moment(value, "DD/MM/YYYY H:mm:ss").toDate() : null;
         },
-      },
-      tinymceOptions: {
-        convert_urls: true,
-        relative_urls: false,
-        remove_script_host: false,
-        toolbar2: "embed_button",
-        content_css: "/css/custom-editor.css",
-        plugins: [
-          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-          "searchreplace wordcount visualblocks visualchars code fullscreen",
-          "insertdatetime media nonbreaking save table contextmenu directionality",
-          "template paste textcolor colorpicker textpattern imagetools toc help emoticons hr codesample embed_button autoresize",
-        ],
       },
       edit_slug: false,
       saved: false,
@@ -696,9 +713,7 @@ export default {
     },
     preventNav(event) {
       event.preventDefault();
-      if (!this.editing) {
-        this.updateUserEditing();
-      }
+      this.updateUserEditing();
       event.returnValue = "";
     },
     updateUserEditing(user_editing = "") {
@@ -820,5 +835,8 @@ export default {
     background: #fff;
     z-index: 99;
   }
+}
+.mce-menubar {
+  background: #fff !important;
 }
 </style>

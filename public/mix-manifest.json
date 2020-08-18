@@ -5,5 +5,6 @@
     "/css/app.css": "/css/app.css",
     "/js/custome.js": "/js/custome.js",
     "/js/jquery.overlayScrollbars.min.js": "/js/jquery.overlayScrollbars.min.js",
+    "/js/plugins/embed_button/plugin.js": "/js/plugins/embed_button/plugin.js",
     "/js/all-custom.js": "/js/all-custom.js"
 }

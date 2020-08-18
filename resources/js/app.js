@@ -18,13 +18,11 @@ import VueToastr2 from "vue-toastr-2";
 import "vue-toastr-2/dist/vue-toastr-2.min.css";
 window.toastr = require("toastr");
 window.urlWeb = `${process.env.MIX_APP_URL}`;
-import tinymce from 'vue-tinymce-editor';
 Vue.mixin(Permissions);
 // Set Vue globally
 window.Vue = Vue;
 // Set Vue router
 Vue.router = router;
-Vue.component('tinymce', tinymce)
 Vue.use(VueRouter);
 Vue.use(VueToastr2);
 Vue.use(DatePicker);
@@ -42,14 +40,4 @@ Vue.component("multiselect", Multiselect);
 const app = new Vue({
     el: "#app",
     router
-});
-Vue.directive("scroll", {
-    inserted: function (el, binding) {
-        let f = function (evt) {
-            if (binding.value(evt, el)) {
-                window.removeEventListener("scroll", f);
-            }
-        };
-        window.addEventListener("scroll", f);
-    }
 });

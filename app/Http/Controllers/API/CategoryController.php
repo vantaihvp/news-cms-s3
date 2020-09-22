@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Post\Category\CategoryRepositoryInterface;
@@ -68,23 +68,34 @@ class CategoryController extends Controller
             'title' => 'required'
         ]);
         $data = $request->all();
-        $seo = $this->seoRepository->create($data);
-        $data['user_id'] = \Auth::user()->id;
-        $data['seo_id'] = $seo->id;
-        if($request->filled('slug')){
-            $data['slug'] = $this->slugify($request->get('slug'));
-        }else{
-            $data['slug'] = $this->slugify($request->get('title'));
-        }
-        if($request->filled('taxonomy')){
-            $data['taxonomy'] = $request->get('taxonomy');
-        }
-        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
-        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->description;
-        $data['seo_id'] = $this->seoRepository->create($data_seo)->id;
-        $rs = $this->categoryRepository->create($data);
-        if($rs){
-            return response()->json(['success'=>$rs]);
+        $user = \Auth::user();
+
+        $slug_Category = $request->slug ? $request->slug : Str::slug($request->title);
+        // seo 
+        $seoObj = [
+            'title' => !empty($request->seo['title']) ? Str::of($request->seo['title'])->trim() : Str::of($request->title)->trim(),
+            'slug' => !empty($request->seo['slug']) ? $request->seo['slug'] : $slug_Category,
+            'description' => !empty($request->seo['description']) ? $request->seo['description'] : Str::substr($request->description, 0, 158),
+            'synonyms' => !empty($request->seo['synonyms']) ? $request->seo['synonyms'] : '',
+            'keyword' => !empty($request->seo['keyword']) ? $request->seo['keyword'] : '',
+        ];
+        $seo = $this->seoRepository->create($seoObj);
+        //end seo
+
+        $dataCategory = [
+            'title' => Str::of($request->title)->trim(),
+            'slug' => $slug_Category,
+            'description' => $request->description,
+            'thumbnail_id' => $request->thumbnail_id,
+            'parent_id' => $request->parent_id,
+            'taxonomy' => "category",
+            'seo_id' => $seo->id,
+            'user_id' => $user->id,
+        ];
+
+        $category = $this->categoryRepository->create($dataCategory);
+        if($category){
+            return response()->json(['success'=>$category]);
         }
         return response()->json(['errors'=> ['Tạo không thành công']]);
     }
@@ -127,19 +138,36 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'title' => 'required'
+        ]);
+        $user = \Auth::user();
         $attributes = $request->all();
-        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
-        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->description;
+        $slug_Category = $request->slug ? $request->slug : Str::slug($request->title);
+        $dataCategory = [
+            'title' => Str::of($request->title)->trim(),
+            'slug' => $slug_Category,
+            'description' => $request->description,
+            'parent_id' => $request->parent_id,
+            'taxonomy' => "category",
+            'user_id' => $user->id,
+        ];
+        $rsCategory = $this->categoryRepository->update($id,$dataCategory);
+
+        $seoObj = [
+            'title' => !empty($request->seo['title']) ? Str::of($request->seo['title'])->trim() : Str::of($request->title)->trim(),
+            'slug' => !empty($request->seo['slug']) ? $request->seo['slug'] : $slug_Category,
+            'description' => !empty($request->seo['description']) ? $request->seo['description'] : Str::substr($request->description, 0, 158),
+            'synonyms' => !empty($request->seo['synonyms']) ? $request->seo['synonyms'] : '',
+            'keyword' => !empty($request->seo['keyword']) ? $request->seo['keyword'] : '',
+        ];
         $seo_id = $this->categoryRepository->find($id)->seo_id;
-        if($seo_id){
-            $this->seoRepository->update($seo_id,$data_seo);
-        }else{
-            $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
+        $rsSeo = $this->seoRepository->update($seo_id,$seoObj);
+
+        if($rsCategory && $rsSeo){
+            return response()->json(['success'=>$rsCategory]);
         }
-        $data = $this->categoryRepository->update($id,$attributes);
-        if($data){
-            return response()->json(['success'=>$data]);
-        }
+        return response()->json(['error'=>'Lỗi']);
     }
 
     /**

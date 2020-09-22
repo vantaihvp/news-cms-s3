@@ -208,7 +208,16 @@
             </ul>
           </div>
         </div>
-        <search-engine-optimize ref="seoForm" v-model="seoObj" />
+        <search-engine-optimize
+          ref="seoForm"
+          v-model="seoObj"
+          :my-title="seoObj.title"
+          :my-slug="seoObj.slug"
+          :my-content="seoObj.description"
+          :my-description="seoObj.description"
+          :my-keyword="seoObj.keyword"
+          :my-synonyms="seoObj.synonyms"
+        />
         <div class="card shadow-none">
           <div class="card-header">
             <div class="float-left">
@@ -476,7 +485,10 @@ export default {
     return {
       seoObj: {
         title: "",
+        slug: "",
         description: "",
+        keyword: "",
+        synonyms: "",
       },
       post: {
         title: "",
@@ -668,7 +680,14 @@ export default {
       dataForm.categories_id = this.selectedCategories;
       dataForm.related_posts = relatedPostArray;
       dataForm.selectedTags = this.selectedTags;
-      dataForm.seo = this.seoObj;
+      dataForm.seo = {
+        title: document.getElementById("snippet-editor-title").value,
+        slug: document.getElementById("snippet-editor-slug").value,
+        description: document.getElementById("snippet-editor-meta-description")
+          .value,
+        synonyms: document.getElementById("synonyms").value,
+        keyword: document.getElementById("focusKeyword").value,
+      };
       axios
         .put("auth/posts/" + this.post.id, dataForm)
         .then((rs) => {

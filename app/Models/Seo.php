@@ -12,9 +12,9 @@ class Seo extends Model
     protected $table = "seo";
     protected $fillable = [
         'title',
+        'slug',
         'description',
-        'keywork',
-        'obj_id',
-        'obj_name',
+        'synonyms',
+        'keyword',
     ];
 }

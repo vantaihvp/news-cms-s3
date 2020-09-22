@@ -26,36 +26,56 @@
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                   <label class="lable-required">Tiêu đề:</label>
-                  <input type="text" v-model="title" name="title" class="form-control" required />
+                  <input
+                    type="text"
+                    v-model="category.title"
+                    name="title"
+                    class="form-control"
+                    required
+                  />
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                   <label>Slug:</label>
-                  <input type="text" v-model="slug" name="slug" class="form-control" />
+                  <input type="text" v-model="category.slug" name="slug" class="form-control" />
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                   <label>Chuyên mục cha:</label>
-                  <select class="form-control" v-model="parent_id" name="parent_id">
+                  <select class="form-control" v-model="category.parent_id" name="parent_id">
                     <option value="0">--Trống--</option>
                     <option
-                      v-for="category in categories"
-                      :key="category.id"
-                      v-bind:value="category.id"
-                    >{{category.title}}</option>
+                      v-for="cat in categories"
+                      :key="cat.id"
+                      v-bind:value="cat.id"
+                    >{{cat.title}}</option>
                   </select>
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                   <label>Mô tả thêm</label>
-                  <textarea class="form-control" v-model="description" name="description" rows="3"></textarea>
+                  <textarea
+                    class="form-control"
+                    id="myid"
+                    ref="myid"
+                    v-model="category.description"
+                    name="description"
+                    rows="3"
+                  ></textarea>
                 </div>
               </div>
               <div class="col-md-12">
-                <search-engine-optimize ref="seoForm" v-model="seoObj" />
+                <search-engine-optimize
+                  ref="seoForm"
+                  v-model="seoObj"
+                  :my-title="category.title"
+                  :my-slug="category.slug"
+                  :my-content="category.description"
+                  :my-description="category.description"
+                />
               </div>
             </div>
           </div>
@@ -74,53 +94,52 @@ import "toastr/build/toastr.min.css";
 import SearchEngineOptimize from "./../widgets/SearchEngineOptimize";
 export default {
   components: {
-    SearchEngineOptimize
+    SearchEngineOptimize,
   },
   data() {
     return {
-      seoObj: {
+      seoObj: {},
+      category: {
         title: "",
-        description: ""
+        slug: "",
+        parent_id: 0,
+        description: "",
       },
-      title: "",
-      slug: "",
-      parent_id: 0,
       categories: {},
-      description: "",
-      errors: []
+      errors: [],
     };
   },
   methods: {
     getTaxonomy() {
-      axios.get("auth/categories/get-categories").then(data => {
+      axios.get("auth/categories/get-categories").then((data) => {
         this.categories = data.data.success;
       });
     },
     submitCreateCategory(event) {
       let dataForm = {
-        title: this.title,
-        slug: this.slug,
-        parent_id: this.parent_id,
-        description: this.description,
-        seo: this.seoObj
+        title: this.category.title,
+        slug: this.category.slug,
+        parent_id: this.category.parent_id,
+        description: this.category.description,
+        seo: this.seoObj,
       };
       axios
         .post("auth/categories", dataForm)
-        .then(rs => {
+        .then((rs) => {
           toastr.success("Thành công", "Thêm thành công");
           this.$router.push({
-            path: "/admin/categories"
+            path: "/admin/categories",
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.errors = error.response.data.errors;
-          toastr.success("Lỗi", "Thêm không thành công");
+          toastr.error("Lỗi", "Thêm không thành công");
         });
-    }
+    },
   },
   created() {
     this.getTaxonomy();
-  }
+  },
 };
 </script>
 

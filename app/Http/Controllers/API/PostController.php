@@ -12,6 +12,7 @@ use App\Repositories\Photo\PhotoRepositoryInterface;
 use App\Repositories\Seo\SeoRepositoryInterface;
 use App\Repositories\Post\Revision\PostRevisionRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
+use Illuminate\Support\Str;
 class PostController extends Controller
 {
     protected $postRepository;
@@ -66,21 +67,32 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required'
+            'title' => 'required',
+            'description' => 'required',
         ]);
+
         $user = Auth::user();
         $data = $request->all();
         $data['user_id'] = $user->id;
         $data['date'] = Carbon::parse($request->date);
         $data['categories_id'] = json_encode($request->categories_id);
         $data['related_posts'] = json_encode($request->related_posts);
-        $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
-        $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->excerpt;
-        $data['seo_id'] = $this->seoRepository->create($data_seo)->id;
+
+        $post_slug = $request->slug ? $request->slug : Str::slug($request->title);
+        // seo 
+        $seoObj = [
+            'title' => !empty($request->seo['title']) ? Str::of($request->seo['title'])->trim() : Str::of($request->title)->trim(),
+            'slug' => !empty($request->seo['slug']) ? $request->seo['slug'] : $post_slug,
+            'description' => !empty($request->seo['description']) ? strip_tags($request->seo['description']) : Str::limit(strip_tags($request->description),158),
+            'synonyms' => !empty($request->seo['synonyms']) ? $request->seo['synonyms'] : '',
+            'keyword' => !empty($request->seo['keyword']) ? $request->seo['keyword'] : '',
+        ];
+        $seo = $this->seoRepository->create($seoObj);
+        $data['seo_id'] = $seo->id;
         if($request->filled('slug')){
-            $data['slug'] = $this->slugify($request->get('slug'));
+            $data['slug'] = Str::slug($request->get('slug'));
         }else{
-            $data['slug'] = $this->slugify($request->get('title'));
+            $data['slug'] = $post_slug;
         }
         $request['slug'] = $data['slug'];
         // return $request;
@@ -93,7 +105,7 @@ class PostController extends Controller
             if(!$this->categoryRepository->find($item['id'])){
                 $tags = array(
                     'title' => $item['title'],
-                    'slug'  => $this->slugify($item['title']),
+                    'slug'  => Str::slug($item['title']),
                     'taxonomy' => 'tag',
                     'user_id'   => $user->id,
                 );
@@ -201,7 +213,7 @@ class PostController extends Controller
             $user = \Auth::user();
             $attributes = $request->all();
             $attributes['date'] = Carbon::parse($request->date);
-            $attributes['slug'] = $this->postRepository->getSlug($this->slugify($request->get('slug')),$id);
+            $attributes['slug'] = $this->postRepository->getSlug(Str::slug($request->get('slug')),$id);
             $request['id'] = $id;
             if($request->filled('selectedTags')){
                 $arrTags = array();
@@ -209,7 +221,7 @@ class PostController extends Controller
                     if(!$this->categoryRepository->find($item['id'])){
                         $tags = array(
                             'title' => $item['title'],
-                            'slug'  => $this->slugify($item['title']),
+                            'slug'  => Str::slug($item['title']),
                             'taxonomy' => 'tag',
                             'user_id'   => $user->id,
                         );
@@ -226,14 +238,17 @@ class PostController extends Controller
             if($request->filled('related_posts')){
                 $attributes['related_posts'] = json_encode($request->related_posts);
             }
-            $data_seo['title'] = $request->seo['title'] ? $request->seo['title'] : $request->title;
-            $data_seo['description'] = $request->seo['description']? $request->seo['description'] : $request->excerpt;
+
+            $seoObj = [
+                'title' => !empty($request->seo['title']) ? Str::of($request->seo['title'])->trim() : Str::of($request->title)->trim(),
+                'slug' => !empty($request->seo['slug']) ? $request->seo['slug'] : $slug_Category,
+                'description' => !empty($request->seo['description']) ? strip_tags($request->seo['description']) : Str::limit(strip_tags($request->description),158),
+                'synonyms' => !empty($request->seo['synonyms']) ? $request->seo['synonyms'] : '',
+                'keyword' => !empty($request->seo['keyword']) ? $request->seo['keyword'] : '',
+            ];
             $seo_id = $this->postRepository->find($id)->seo_id;
-            if($seo_id){
-                $this->seoRepository->update($seo_id,$data_seo);
-            }else{
-                $attributes['seo_id'] = $this->seoRepository->create($data_seo)->id;
-            }
+            $rsSeo = $this->seoRepository->update($seo_id,$seoObj);
+
             $attributes['user_edit'] = $user->id;
             $data = $this->postRepository->update($id,$attributes);
             if($data){

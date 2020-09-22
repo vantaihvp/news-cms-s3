@@ -154,7 +154,14 @@
             </ul>
           </div>
         </div>
-        <search-engine-optimize ref="seoForm" v-model="seoObj" />
+        <search-engine-optimize
+          ref="seoForm"
+          v-model="seoObj"
+          :my-title="post.title"
+          :my-slug="post.slug"
+          :my-content="post.description"
+          :my-description="post.excerpt"
+        />
         <div class="card shadow-none">
           <div class="card-header">
             <div class="float-left">

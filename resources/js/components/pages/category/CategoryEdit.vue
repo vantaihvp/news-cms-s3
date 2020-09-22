@@ -55,7 +55,16 @@
                 </div>
               </div>
               <div class="col-md-12">
-                <search-engine-optimize ref="seoForm" v-model="seoObj" />
+                <search-engine-optimize
+                  ref="seoForm"
+                  v-model="seoObj"
+                  :my-title="seoObj.title"
+                  :my-slug="seoObj.slug"
+                  :my-content="seoObj.description"
+                  :my-description="seoObj.description"
+                  :my-keyword="seoObj.keyword"
+                  :my-synonyms="seoObj.synonyms"
+                />
               </div>
             </div>
           </div>
@@ -77,32 +86,31 @@ import "toastr/build/toastr.min.css";
 export default {
   props: ["id"],
   components: {
-    SearchEngineOptimize
+    SearchEngineOptimize,
   },
   data() {
     return {
-      seoObj: {
-        title: "",
-        description: ""
-      },
+      seoObj: {},
       categories: {},
-      parent_id: 0,
       title: "",
-      description: "",
       slug: "",
-      errors: []
+      parent_id: "",
+      description: "",
+      errors: [],
     };
   },
   methods: {
     getTaxonomy() {
-      axios.get("auth/categories/get-categories").then(data => {
-        this.categories = data.data.success.filter(item => item.id != this.id);
+      axios.get("auth/categories/get-categories").then((data) => {
+        this.categories = data.data.success.filter(
+          (item) => item.id != this.id
+        );
       });
     },
     getData() {
       axios
         .get("/auth/categories/" + this.id + "/edit")
-        .then(response => {
+        .then((response) => {
           let data = response.data.success;
           this.title = data.title;
           this.slug = data.slug;
@@ -110,7 +118,7 @@ export default {
           this.description = data.description;
           this.seoObj = response.data.success.seoObj;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -120,26 +128,34 @@ export default {
         slug: this.slug,
         parent_id: this.parent_id,
         description: this.description,
-        seo: this.seoObj
+        seo: {
+          title: document.getElementById("snippet-editor-title").value,
+          slug: document.getElementById("snippet-editor-slug").value,
+          description: document.getElementById(
+            "snippet-editor-meta-description"
+          ).value,
+          synonyms: document.getElementById("synonyms").value,
+          keyword: document.getElementById("focusKeyword").value,
+        },
       };
       axios
         .put("auth/categories/" + this.id, dataForm)
-        .then(rs => {
+        .then((rs) => {
           toastr.success("Thành công", "Cập nhật thành công");
           this.$router.push({
-            path: "/admin/categories"
+            path: "/admin/categories",
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.errors = error.response.data.errors;
           toastr.error("Lỗi", "Cập nhật không thành công");
         });
-    }
+    },
   },
   created() {
     this.getData();
     this.getTaxonomy();
-  }
+  },
 };
 </script>
 

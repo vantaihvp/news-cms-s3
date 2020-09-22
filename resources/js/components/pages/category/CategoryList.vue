@@ -47,7 +47,7 @@
                 <th scope="col">Tiêu đề</th>
                 <th scope="col">Mô tả</th>
                 <th scope="col">Slug</th>
-                <th scope="col" class="text-center">Hành động</th>
+                <th scope="col" class="text-center" colspan="2">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -55,7 +55,7 @@
                 <td scope="col">{{category.title}}</td>
                 <td scope="col">{{category.description}}</td>
                 <td scope="col">{{category.slug}}</td>
-                <td scope="col" class="text-center">
+                <td scope="col" class="text-center" width="1">
                   <router-link
                     :to="{
                       name: 'category-edit',
@@ -66,6 +66,8 @@
                   >
                     <i class="far fa-pencil"></i>
                   </router-link>
+                </td>
+                <td width="1">
                   <button
                     class="btn btn-danger"
                     @click="deleteCategory(category.id)"
@@ -89,15 +91,15 @@ import "toastr/build/toastr.min.css";
 export default {
   props: {
     message: String,
-    status: ""
+    status: "",
   },
   data() {
     return {
       categories: {},
       searchText: "",
       error: {
-        message: ""
-      }
+        message: "",
+      },
     };
   },
   created() {
@@ -116,9 +118,8 @@ export default {
       }
       axios
         .get("auth/categories/get-categories", { params: paramsData })
-        .then(data => {
+        .then((data) => {
           this.categories = data.data.success;
-          console.log(data.data.success);
         });
     },
     deleteCategory(categoryId) {
@@ -126,16 +127,16 @@ export default {
       if (result) {
         axios
           .delete("/auth/categories/" + categoryId)
-          .then(rs => {
+          .then((rs) => {
             toastr.success("Thành công", "Xóa thành công");
             this.getResults();
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

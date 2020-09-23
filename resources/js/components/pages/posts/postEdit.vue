@@ -213,7 +213,7 @@
           v-model="seoObj"
           :my-title="seoObj.title"
           :my-slug="seoObj.slug"
-          :my-content="seoObj.description"
+          :my-content="post.description"
           :my-description="seoObj.description"
           :my-keyword="seoObj.keyword"
           :my-synonyms="seoObj.synonyms"

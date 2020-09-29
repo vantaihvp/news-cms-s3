@@ -18,7 +18,7 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
     {
         return \App\Models\Posts::class;
     }
-    public function index($attributes){
+    public function filterData($attributes){
         $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7')->toDateTimeString();
         // return $dt;
         $user = \Auth::user();
@@ -36,33 +36,39 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
         }
         if($attributes->filled('categories')){
             $categories = $attributes->get('categories');
-            foreach ($categories as $key => $value) {
-                if($key==0){
-                    $rs->whereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
-                }else{
-                    $rs->orwhereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+            $rs->where(function($q) use ($categories){
+                foreach ($categories as $key => $value) {
+                    if($key==0){
+                        $q->whereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+                    }else{
+                        $q->orwhereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+                    }
                 }
-            }
+            });
         }
         if($attributes->filled('categories_id')){
             $categories = explode(',',$attributes->get('categories_id'));
-            foreach ($categories as $key => $value) {
-                if($key==0){
-                    $rs->whereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
-                }else{
-                    $rs->orwhereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+            $rs->where(function($q) use ($categories){
+                foreach ($categories as $key => $value) {
+                    if($key==0){
+                        $q->whereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+                    }else{
+                        $q->orwhereRaw('JSON_CONTAINS(categories_id, "'.$value.'")');
+                    }
                 }
-            }
+            });
         }
         if($attributes->filled('tags_id')){
             $tags_id = explode(',',$attributes->get('tags_id'));
-            foreach ($tags_id as $key => $value) {
-                if($key==0){
-                    $rs->whereRaw('JSON_CONTAINS(tags_id, "'.$value.'")');
-                }else{
-                    $rs->orwhereRaw('JSON_CONTAINS(tags_id, "'.$value.'")');
+            $rs->where(function($q) use ($tags_id){
+                foreach ($tags_id as $key => $value) {
+                    if($key==0){
+                        $q->whereRaw('JSON_CONTAINS(tags_id, "'.$value.'")');
+                    }else{
+                        $q->orwhereRaw('JSON_CONTAINS(tags_id, "'.$value.'")');
+                    }
                 }
-            }
+            });
         }
         if($user){
             if($attributes->filled('status') && $attributes->status!='deleted'){
@@ -107,6 +113,10 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
         }else{
             $rs = $rs->paginate($per_page);
         }
+        return $rs;
+    }
+    public function index($attributes){
+        $rs = $this->filterData($attributes);
         foreach ($rs as $key => $post) {
             $post['user_name'] = User::find($post->user_id)->name;
             if($post->user_editing){

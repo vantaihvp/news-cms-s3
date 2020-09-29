@@ -83,7 +83,7 @@ class PostController extends Controller
         $seoObj = [
             'title' => !empty($request->seo['title']) ? Str::of($request->seo['title'])->trim() : Str::of($request->title)->trim(),
             'slug' => !empty($request->seo['slug']) ? $request->seo['slug'] : $post_slug,
-            'description' => !empty($request->seo['description']) ? strip_tags($request->seo['description']) : Str::limit(strip_tags($request->description),158),
+            'description' => !empty($request->seo['description']) ? strip_tags($request->seo['description']) : Str::limit(strip_tags($request->description),150),
             'synonyms' => !empty($request->seo['synonyms']) ? $request->seo['synonyms'] : '',
             'keyword' => !empty($request->seo['keyword']) ? $request->seo['keyword'] : '',
         ];
@@ -242,7 +242,7 @@ class PostController extends Controller
             $seoObj = [
                 'title' => !empty($request->seo['title']) ? Str::of($request->seo['title'])->trim() : Str::of($request->title)->trim(),
                 'slug' => !empty($request->seo['slug']) ? $request->seo['slug'] : $slug_Category,
-                'description' => !empty($request->seo['description']) ? strip_tags($request->seo['description']) : Str::limit(strip_tags($request->description),158),
+                'description' => !empty($request->seo['description']) ? strip_tags($request->seo['description']) : Str::limit(strip_tags($request->description),150),
                 'synonyms' => !empty($request->seo['synonyms']) ? $request->seo['synonyms'] : '',
                 'keyword' => !empty($request->seo['keyword']) ? $request->seo['keyword'] : '',
             ];

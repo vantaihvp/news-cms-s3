@@ -23,8 +23,10 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
         return $data;
     }
     public function getTags($attributes){
-        $data = $this->_model->where('taxonomy','tag')->orderBy('id','DESC');
-        
+        $data = $this->_model->where('taxonomy','tag');
+        if($attributes->filled('orderBy')){
+            $data->orderBy($attributes->get('orderBy'),'DESC');
+        }
         $per_page = 10;
         if($attributes->filled('per_page')){
             $per_page = $attributes->get('per_page');
@@ -36,6 +38,9 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
         if($attributes->filled('include')){
             $include = explode(',',$attributes->get('include'));
             $data->whereIn('id',$include);
+        }
+        if($attributes->filled('sortLenght')){
+            $data->orderByRaw('CHAR_LENGTH('.$attributes->get("sortLenght").')','DESC');
         }
 
         $data = $data->paginate($per_page);

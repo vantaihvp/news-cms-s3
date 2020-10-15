@@ -7,7 +7,11 @@
         </div>
         <div class="float-right">
           <div class="d-flex">
-            <form method="get" class="form-inline mr-3" @submit.prevent="getResults(1)">
+            <form
+              method="get"
+              class="form-inline mr-3"
+              @submit.prevent="getResults(1)"
+            >
               <div class="input-group input-group">
                 <input type="text" class="form-control" v-model="searchText" />
                 <span class="input-group-append">
@@ -16,7 +20,9 @@
                     class="btn btn-danger"
                     v-if="searchText"
                     @click="resetData()"
-                  >X</button>
+                  >
+                    X
+                  </button>
                   <button type="submit" class="btn btn-primary">Tìm</button>
                 </span>
               </div>
@@ -26,7 +32,8 @@
                 :to="{ name: 'tag-create' }"
                 class="btn btn-primary"
                 v-if="this.$can('tag-create')"
-              >Thêm mới</router-link>
+                >Thêm mới</router-link
+              >
             </div>
           </div>
         </div>
@@ -52,14 +59,14 @@
             </thead>
             <tbody>
               <tr v-for="tag in tags.data" :key="tag.id">
-                <td scope="col">{{tag.id}}</td>
-                <td scope="col">{{tag.title}}</td>
-                <td scope="col">{{tag.description}}</td>
+                <td scope="col">{{ tag.id }}</td>
+                <td scope="col">{{ tag.title }}</td>
+                <td scope="col">{{ tag.description }}</td>
                 <td scope="col" class="text-center">
                   <router-link
                     :to="{
                       name: 'tag-edit',
-                      params: { id: tag.id }
+                      params: { id: tag.id },
                     }"
                     v-if="$can('tag-edit')"
                     class="btn btn-warning"
@@ -77,7 +84,11 @@
               </tr>
             </tbody>
           </table>
-          <pagination :data="tags" @pagination-change-page="getResults" :limit="4"></pagination>
+          <pagination
+            :data="tags"
+            @pagination-change-page="getResults"
+            :limit="4"
+          ></pagination>
         </div>
       </div>
     </div>
@@ -90,15 +101,15 @@ import "toastr/build/toastr.min.css";
 export default {
   props: {
     message: String,
-    status: ""
+    status: "",
   },
   data() {
     return {
       tags: {},
       searchText: "",
       error: {
-        message: ""
-      }
+        message: "",
+      },
     };
   },
   created() {
@@ -110,7 +121,9 @@ export default {
       this.getResults(1);
     },
     getResults(page) {
-      let paramsData = {};
+      let paramsData = {
+        orderBy: "id",
+      };
       if (typeof page === "undefined") {
         paramsData["page"] = 1;
       } else {
@@ -119,7 +132,7 @@ export default {
       if (this.searchText) {
         paramsData["s"] = this.searchText;
       }
-      axios.get("auth/tags/get-tags", { params: paramsData }).then(data => {
+      axios.get("auth/tags/get-tags", { params: paramsData }).then((data) => {
         this.tags = data.data.success;
       });
     },
@@ -128,16 +141,16 @@ export default {
       if (result) {
         axios
           .delete("/auth/categories/" + tagId)
-          .then(rs => {
+          .then((rs) => {
             toastr.success("Thành công", "Xóa thành công");
             this.getResults();
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

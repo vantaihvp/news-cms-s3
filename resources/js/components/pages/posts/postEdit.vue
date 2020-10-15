@@ -16,7 +16,9 @@
           <div class="card-body" id="post-create">
             <div class="error" v-if="errors.length">
               <div class="alert alert-danger" role="alert">
-                <span v-for="(err, index) in errors" :key="index">{{ err }}</span>
+                <span v-for="(err, index) in errors" :key="index">{{
+                  err
+                }}</span>
                 <hr />
               </div>
             </div>
@@ -40,7 +42,9 @@
                     <a href="#">
                       https://billboardvn.vn/
                       <span id="editable-post-name">
-                        <span class="slug" v-if="!this.edit_slug">{{ post.slug }}</span>
+                        <span class="slug" v-if="!this.edit_slug">{{
+                          post.slug
+                        }}</span>
                         <input
                           type="text"
                           id="new-post-slug"
@@ -59,51 +63,63 @@
                       aria-label="Chỉnh sửa permalink"
                       @click="editSlug"
                       v-if="!this.edit_slug"
-                    >Chỉnh sửa</button>
+                    >
+                      Chỉnh sửa
+                    </button>
                     <button
                       v-if="this.edit_slug"
                       type="button"
                       class="save button button-small btn btn-outline-success btn-sm"
                       @click="updateSlug"
-                    >Ok</button>
+                    >
+                      Ok
+                    </button>
                     <button
                       v-if="this.edit_slug"
                       type="button"
                       class="cancel btn-outline-dark btn btn-sm"
                       @click="cancelSlug"
-                    >Hủy</button>
+                    >
+                      Hủy
+                    </button>
                   </span>
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                   <label>Tóm tắt</label>
-                  <textarea class="form-control" v-model="post.excerpt" rows="3"></textarea>
+                  <textarea
+                    class="form-control"
+                    v-model="post.excerpt"
+                    rows="3"
+                  ></textarea>
                 </div>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group form-content group-content">
                   <label>Nội dung</label>
-                  <MediaContent ref="mediacontent" @insertMedia="insertMedia($event)" />
+                  <MediaContent
+                    ref="mediacontent"
+                    @insertMedia="insertMedia($event)"
+                  />
                   <editor
                     id="post-content"
                     ref="tm"
                     v-model="post.description"
                     :init="{
-                        content_css:
-                            '/css/custom-editor.css',
-                        convert_urls: true,
-                        relative_urls: false,
-                        remove_script_host: false,
-                        toolbar2: 'embed_button',
-                        plugins: [
-                            'autolink lists link charmap print preview hr anchor pagebreak',
-                            'searchreplace wordcount visualblocks visualchars code fullscreen',
-                            'insertdatetime nonbreaking save table contextmenu directionality',
-                            'template paste textcolor colorpicker textpattern toc emoticons hr codesample embed_button autoresize'
-                        ],
-                        toolbar:
-                            'embed_button | undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent'
+                      content_css: '/css/custom-editor.css',
+                      convert_urls: true,
+                      relative_urls: false,
+                      remove_script_host: false,
+                      toolbar2: 'embed_button',
+                      plugins: [
+                        'autolink lists link charmap print preview hr anchor pagebreak',
+                        'searchreplace wordcount visualblocks visualchars code fullscreen',
+                        'insertdatetime nonbreaking save table contextmenu directionality',
+                        'template paste textcolor colorpicker textpattern toc emoticons hr codesample embed_button autoresize',
+                      ],
+                      toolbar:
+                        'embed_button | undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
                     }"
                   />
                   <div class="end-tinymce"></div>
@@ -118,7 +134,11 @@
               <h4 class="card-title">Tùy chỉnh bài viết</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -154,7 +174,11 @@
               <h4 class="card-title">Layout bài viết</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -165,9 +189,9 @@
                 <img
                   src="/images/admin/single_templates/single_template_0.png"
                   v-bind:class="{
-                                        active: post.layout_name == 0,
-                                        'img-thumbnail': true
-                                    }"
+                    active: post.layout_name == 0,
+                    'img-thumbnail': true,
+                  }"
                   data-id="0"
                   @click="setPostLayout"
                 />
@@ -176,9 +200,9 @@
                 <img
                   src="/images/admin/single_templates/single_template_1.png"
                   v-bind:class="{
-                                        active: post.layout_name == 1,
-                                        'img-thumbnail': true
-                                    }"
+                    active: post.layout_name == 1,
+                    'img-thumbnail': true,
+                  }"
                   data-id="1"
                   @click="setPostLayout"
                 />
@@ -187,9 +211,9 @@
                 <img
                   src="/images/admin/single_templates/single_template_2.png"
                   v-bind:class="{
-                                        active: post.layout_name == 2,
-                                        'img-thumbnail': true
-                                    }"
+                    active: post.layout_name == 2,
+                    'img-thumbnail': true,
+                  }"
                   data-id="2"
                   @click="setPostLayout"
                 />
@@ -198,9 +222,9 @@
                 <img
                   src="/images/admin/single_templates/single_template_3.png"
                   v-bind:class="{
-                                        active: post.layout_name == 3,
-                                        'img-thumbnail': true
-                                    }"
+                    active: post.layout_name == 3,
+                    'img-thumbnail': true,
+                  }"
                   data-id="3"
                   @click="setPostLayout"
                 />
@@ -224,7 +248,11 @@
               <h4 class="card-title">Bài viết liên quan</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -273,20 +301,34 @@
                   <option value="pending">Chờ duyệt</option>
                   <option value="private">Riêng tư</option>
                   <option value="return">Trả bài</option>
-                  <option value="approved" v-if="this.$can('publish-post')">Đã duyệt</option>
-                  <option value="publish" v-if="this.$can('publish-post')">Xuất bản</option>
+                  <option value="approved" v-if="this.$can('publish-post')">
+                    Đã duyệt
+                  </option>
+                  <option value="publish" v-if="this.$can('publish-post')">
+                    Xuất bản
+                  </option>
                 </select>
               </div>
             </div>
             <div class="form-group row">
               <label for class="col-sm-12 col-form-label">Đăng lúc:</label>
               <div class="col-sm-12">
-                <date-picker type="datetime" v-model="post.date" :format="momentFormat"></date-picker>
+                <date-picker
+                  type="datetime"
+                  v-model="post.date"
+                  :format="momentFormat"
+                ></date-picker>
               </div>
             </div>
           </div>
           <div class="card-footer text-right">
-            <button class="btn btn-primary" type="button" @click.prevent="submitPost">Cập nhật</button>
+            <button
+              class="btn btn-primary"
+              type="button"
+              @click.prevent="submitPost"
+            >
+              Cập nhật
+            </button>
           </div>
         </div>
         <div class="card shadow-none card-post-format">
@@ -295,7 +337,11 @@
               <h4 class="card-title">Định dạng</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -334,13 +380,20 @@
             </ul>
           </div>
         </div>
-        <div class="card shadow-none card-post-url-video" v-if="post.format == 'video'">
+        <div
+          class="card shadow-none card-post-url-video"
+          v-if="post.format == 'video'"
+        >
           <div class="card-header">
             <div class="float-left">
               <h4 class="card-title">Url Video</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -364,7 +417,11 @@
               <h4 class="card-title">Chuyên mục</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -374,9 +431,7 @@
               <li
                 v-for="category in categories"
                 :key="category.id"
-                v-bind:class="[
-                                    category.parent_id ? 'child' : 'parent'
-                                ]"
+                v-bind:class="[category.parent_id ? 'child' : 'parent']"
               >
                 <div class="form-check icheck-primary">
                   <label class="form-check-label">
@@ -400,7 +455,11 @@
               <h4 class="card-title">Tags</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -437,7 +496,11 @@
               <h4 class="card-title">Hình đại diện</h4>
             </div>
             <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <button
+                type="button"
+                class="btn btn-tool"
+                data-card-widget="collapse"
+              >
                 <i class="fas fa-minus"></i>
               </button>
             </div>
@@ -448,7 +511,11 @@
               class="img-fluid img-thumbnail"
               v-if="thumbnail.url == ''"
             />
-            <img :src="thumbnail.url" class="img-fluid img-thumbnail" v-if="thumbnail.url" />
+            <img
+              :src="thumbnail.url"
+              class="img-fluid img-thumbnail"
+              v-if="thumbnail.url"
+            />
             <ThumbnailModal
               v-model="post.thumbnail_id"
               v-if="post.thumbnail_id"
@@ -618,10 +685,12 @@ export default {
         this.isLoading = true;
         let paramsData = {};
         paramsData["s"] = query;
+        paramsData["sortLenght"] = "title";
         paramsData["per_page"] = 100;
         axios
           .get("auth/tags/get-tags", { params: paramsData })
           .then((response) => {
+            console.log(response.data.success.data);
             this.tagOptions = response.data.success.data;
             this.isLoading = false;
           });

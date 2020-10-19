@@ -1,12 +1,18 @@
 <template>
   <section class="post-list">
-    <div class="card card-outline card-info shadow-none card-search collapsed-card">
+    <div
+      class="card card-outline card-info shadow-none card-search collapsed-card"
+    >
       <div class="card-header">
         <div class="float-left">
           <h4 class="card-title">Tìm kiếm</h4>
         </div>
         <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+          <button
+            type="button"
+            class="btn btn-tool"
+            data-card-widget="collapse"
+          >
             <i class="fas fa-plus"></i>
           </button>
         </div>
@@ -19,7 +25,13 @@
               <div class="input-group input-group">
                 <input type="text" class="form-control" v-model="searchText" />
                 <span class="input-group-append">
-                  <button type="button" class="btn btn-danger" @click="resetData()">X</button>
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    @click="resetData()"
+                  >
+                    X
+                  </button>
                   <button type="submit" class="btn btn-primary">Tìm</button>
                 </span>
               </div>
@@ -93,7 +105,9 @@
                 <small class="text-muted">Bài viết của</small>
                 <select class="form-control" v-model="filter_author">
                   <option v-bind:value="0">Tất cả</option>
-                  <option v-bind:value="this.$auth.user().user.id">Của tôi</option>
+                  <option v-bind:value="this.$auth.user().user.id">
+                    Của tôi
+                  </option>
                 </select>
               </div>
             </div>
@@ -105,7 +119,9 @@
                     v-for="option in statusOptions"
                     :key="option.value"
                     v-bind:value="option.value"
-                  >{{ option.text }}</option>
+                  >
+                    {{ option.text }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -137,7 +153,8 @@
             :to="{ name: 'post-create' }"
             class="btn btn-primary"
             v-if="this.$can('post-create')"
-          >Thêm mới</router-link>
+            >Thêm mới</router-link
+          >
         </div>
       </div>
       <div class="card-body">
@@ -170,29 +187,42 @@
                   <p
                     class="editing badge badge-warning"
                     v-if="post.user_editing"
-                  >{{ post.editing_name }} - Đang biên tập</p>
+                  >
+                    {{ post.editing_name }} - Đang biên tập
+                  </p>
                   <p class="title">{{ post.title }}</p>
                   <div class="row-actions" v-if="post && showAction(post)">
                     <span class="edit">
                       <router-link
-                        :to="{name: 'post-edit',params: { id: post.id }}"
+                        :to="{ name: 'post-edit', params: { id: post.id } }"
                         v-if="is_edit_post(post)"
-                      >Chỉnh sửa</router-link>
+                        >Chỉnh sửa</router-link
+                      >
                     </span>
                     <span class="revision">
-                      <router-link :to="{ name: 'post.revision', params: { id: post.id }}">Lịch sử</router-link>
+                      <router-link
+                        :to="{ name: 'post.revision', params: { id: post.id } }"
+                        >Lịch sử</router-link
+                      >
                     </span>
                     <span class="delete">
                       <button
                         class="btn btn-link text-danger p-0 pl-1"
                         @click="deletePost(post.id)"
                         v-if="is_delete_post(post)"
-                      >Xóa</button>
+                      >
+                        Xóa
+                      </button>
                     </span>
                   </div>
                   <div class="row-actions" v-if="post.deleted_at">
                     <span class="edit">
-                      <button class="btn btn-link p-0 pl-1" @click="restorePost(post.id)">Khôi phục</button>
+                      <button
+                        class="btn btn-link p-0 pl-1"
+                        @click="restorePost(post.id)"
+                      >
+                        Khôi phục
+                      </button>
                     </span>
                   </div>
                 </td>
@@ -206,7 +236,11 @@
         </div>
       </div>
       <div class="card-footer">
-        <pagination :data="posts" @pagination-change-page="getData" :limit="4"></pagination>
+        <pagination
+          :data="posts"
+          @pagination-change-page="getData"
+          :limit="4"
+        ></pagination>
       </div>
     </div>
   </section>

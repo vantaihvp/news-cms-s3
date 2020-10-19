@@ -13,14 +13,19 @@
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <form method="GET" id="form-revision-post" @submit.prevent="submitRevisionForm">
+          <form
+            method="GET"
+            id="form-revision-post"
+            @submit.prevent="submitRevisionForm"
+          >
             <table class="table table-borderless table-striped table-data">
               <thead class="thead-light">
                 <th scope="col">Lựa chọn</th>
                 <th scope="col">Tiêu đề</th>
                 <th scope="col">Tác giả</th>
                 <th scope="col">Trạng thái</th>
-                <th scope="col">Date</th>
+                <th scope="col">Ngày xuất bản</th>
+                <th scope="col">Ngày chỉnh sửa</th>
                 <th scope="col">Hành động</th>
               </thead>
               <tbody>
@@ -35,10 +40,11 @@
                       @change="checkPost($event)"
                     />
                   </td>
-                  <td scope="col">{{post_main.title }} (*)</td>
+                  <td scope="col">{{ post_main.title }} (*)</td>
                   <td scope="col">{{ post_main.user_edit_name }}</td>
                   <td scope="col">{{ post_main.status }}</td>
                   <td scope="col">{{ post_main.date }}</td>
+                  <td scope="col">{{ post_main.updated_at }}</td>
                   <td scope="col"></td>
                 </tr>
                 <tr v-for="post in posts_revision" :key="post.id">
@@ -56,8 +62,15 @@
                   <td scope="col">{{ post.user_name }}</td>
                   <td scope="col">{{ post.status }}</td>
                   <td scope="col">{{ post.date }}</td>
+                  <td scope="col">{{ post.updated_at }}</td>
                   <td scope="col">
-                    <button class="btn btn-primary" type="button" @click="restore(post)">Khôi phục</button>
+                    <button
+                      class="btn btn-primary"
+                      type="button"
+                      @click="restore(post)"
+                    >
+                      Khôi phục
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -69,7 +82,7 @@
         </div>
       </div>
     </div>
-    <div class="card border-0 shadow-none" style="overflow: auto;">
+    <div class="card border-0 shadow-none" style="overflow: auto">
       <div class="card-body" id="card-compare">
         <div class="block-title">
           <h3>Tiêu đề</h3>
@@ -146,6 +159,7 @@
 <script>
 import toastr from "toastr";
 // require("colors");
+var moment = require("moment");
 var jsdiff = require("diff");
 import "toastr/build/toastr.min.css";
 export default {
@@ -173,6 +187,12 @@ export default {
         .get("/auth/revision/", { params: dataForm })
         .then((response) => {
           this.posts_revision = response.data;
+          this.posts_revision.forEach(function (post) {
+            post.date = moment(post.date).format("DD-MM-YYYY hh:mm:ss");
+            post.updated_at = moment(post.updated_at).format(
+              "DD-MM-YYYY hh:mm:ss"
+            );
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -184,6 +204,12 @@ export default {
         .then((response) => {
           if (response.data.success) {
             this.post_main = response.data.success;
+            this.post_main.date = moment(this.post_main.date).format(
+              "DD-MM-YYYY hh:mm:ss"
+            );
+            this.post_main.updated_at = moment(
+              this.post_main.updated_at
+            ).format("DD-MM-YYYY hh:mm:ss");
           } else {
             this.$toastr.error("Lỗi", response.data.errors);
           }

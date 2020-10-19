@@ -20,7 +20,6 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
     }
     public function filterData($attributes){
         $dt = Carbon::now('Asia/Ho_Chi_Minh')->addHours('7')->toDateTimeString();
-        // return $dt;
         $user = \Auth::user();
         $per_page   = $attributes['per_page'] ? $attributes['per_page'] : 10;
         $sortKey    = !empty($attributes['sortKey']) ? $attributes['sortKey'] : 'id';
@@ -71,6 +70,10 @@ class PostRepository extends EloquentRepository implements PostRepositoryInterfa
             });
         }
         if($user){
+            $rs->where(function($q) use ($user){
+                $q->where('status','<>','private');
+                $q->orwhere('user_id',$user->id);
+            });
             if($attributes->filled('status') && $attributes->status!='deleted'){
                 $rs->where('status',$attributes->status);
             }
